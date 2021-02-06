@@ -1,0 +1,28 @@
+compatibility: "testBoard"
+
+testMotors:
+  subsystem: "testMotors"
+  description: "All motors used for testing live here"
+  shooterMotors:
+    groups: "motors"
+    testMotor1:
+      channel: 52
+      type: "SparkMax"
+      inverted: True
+      motorType: "kBrushless"
+
+      pid:
+        controlType: "Position"
+        kP: 0
+        kI: 0
+        kD: 0
+        kF: 0
+        feedbackDevice: 1
+        kPreScale: 1
+        coastOnZero: False
+
+      currentLimits:
+        freeLimit: 30
+        stallLimit: 30
+        stallLimitRPM: 50
+        secondaryLimit: 35
