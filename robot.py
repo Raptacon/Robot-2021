@@ -26,6 +26,7 @@ from utils.motorHelper import createMotor
 from utils.sensorFactories import gyroFactory, breaksensorFactory
 from utils.acturatorFactories import compressorFactory, solenoidFactory
 import utils.math
+import navx
 
 class MyRobot(MagicRobot):
     """
@@ -108,6 +109,14 @@ class MyRobot(MagicRobot):
             self.winch.stop()
 
         self.scorpionLoader.checkController()
+
+        """Test navx functions"""
+        print("The X displacement is: " + navx.AHRS.getDisplacementX)
+        print("The Y displacement is: " + navx.AHRS.getDisplacementY)
+        print("The Z displacement is: " + navx.AHRS.getDisplacementZ)
+        print("The yaw (Z) is: " + navx.AHRS.getYaw)
+        print("The pitch (Y) is: " + navx.AHRS.getPitch)
+        print("The roll (X) is: " + navx.AHRS.getRoll)
 
     def testInit(self):
         """
