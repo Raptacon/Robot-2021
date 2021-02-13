@@ -27,6 +27,7 @@ from utils.sensorFactories import gyroFactory, breaksensorFactory
 from utils.acturatorFactories import compressorFactory, solenoidFactory
 import utils.math
 
+
 class MyRobot(MagicRobot):
     """
     Base robot class of Magic Bot Type
@@ -74,20 +75,27 @@ class MyRobot(MagicRobot):
         self.loader.stopLoading()
 
     def teleopInit(self):
-        # Register button events for doof
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kX, ButtonEvent.kOnPress, self.pneumatics.toggleLoader)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kY, ButtonEvent.kOnPress, self.loader.setAutoLoading)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kB, ButtonEvent.kOnPress, self.loader.setManualLoading)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnPress, self.shooter.shootBalls)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnPress, self.loader.stopLoading)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnRelease, self.shooter.doneShooting)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnRelease, self.loader.determineNextAction)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperRight, ButtonEvent.kOnPress, self.elevator.setRaise)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperRight, ButtonEvent.kOnRelease, self.elevator.stop)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.elevator.setLower)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.elevator.stop)
-        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.driveTrain.enableCreeperMode)
-        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
+        # Register button events for doof using array of parameters
+        # pertaining to pressing a button and performing an action
+
+        buttonEvents = [
+            [self.xboxMap.mech,  XboxController.Button.kX,           ButtonEvent.kOnPress,   self.pneumatics.toggleLoader],
+            [self.xboxMap.mech,  XboxController.Button.kY,           ButtonEvent.kOnPress,   self.loader.setAutoLoading],
+            [self.xboxMap.mech,  XboxController.Button.kB,           ButtonEvent.kOnPress,   self.loader.setManualLoading],
+            [self.xboxMap.mech,  XboxController.Button.kA,           ButtonEvent.kOnPress,   self.shooter.shootBalls],
+            [self.xboxMap.mech,  XboxController.Button.kA,           ButtonEvent.kOnPress,   self.loader.stopLoading],
+            [self.xboxMap.mech,  XboxController.Button.kA,           ButtonEvent.kOnRelease, self.shooter.doneShooting],
+            [self.xboxMap.mech,  XboxController.Button.kA,           ButtonEvent.kOnRelease, self.loader.determineNextAction],
+            [self.xboxMap.mech,  XboxController.Button.kBumperRight, ButtonEvent.kOnPress,   self.elevator.setRaise],
+            [self.xboxMap.mech,  XboxController.Button.kBumperRight, ButtonEvent.kOnRelease, self.elevator.stop],
+            [self.xboxMap.mech,  XboxController.Button.kBumperLeft,  ButtonEvent.kOnPress,   self.elevator.setLower],
+            [self.xboxMap.mech,  XboxController.Button.kBumperLeft,  ButtonEvent.kOnRelease, self.elevator.stop],
+            [self.xboxMap.drive, XboxController.Button.kBumperLeft,  ButtonEvent.kOnPress,   self.driveTrain.enableCreeperMode],
+            [self.xboxMap.drive, XboxController.Button.kBumperLeft,  ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode]
+            ]
+
+        for controller, button, event, action in buttonEvents:
+            self.buttonManager.registerButtonEvent(controller, button, event, action)
 
         self.shooter.autonomousDisabled()
 
@@ -128,7 +136,7 @@ class MyRobot(MagicRobot):
         """
         config = self.map.configMapper
         containerName = "subsystem" + groupName[0].upper() + groupName[1:]
-        
+
         if not hasattr(self, containerName):
             setattr(self, containerName, {})
             self.subsystemGyros = {}
