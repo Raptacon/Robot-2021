@@ -110,18 +110,15 @@ class MyRobot(MagicRobot):
 
         self.scorpionLoader.checkController()
 
-        """Test navx functions"""
-        print("The X displacement is: " + navx.AHRS.getDisplacementX)
-        print("The Y displacement is: " + navx.AHRS.getDisplacementY)
-        print("The Z displacement is: " + navx.AHRS.getDisplacementZ)
-        print("The yaw (Z) is: " + navx.AHRS.getYaw)
-        print("The pitch (Y) is: " + navx.AHRS.getPitch)
-        print("The roll (X) is: " + navx.AHRS.getRoll)
+        
+        
+
 
     def testInit(self):
         """
         Function called when testInit is called.
         """
+        
         print("testInit was Successful")
 
     def testPeriodic(self):
