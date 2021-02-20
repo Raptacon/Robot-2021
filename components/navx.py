@@ -1,5 +1,7 @@
 import wpilib
 import navx
+from components.driveTrain import DriveTrain
+from magicbot import feedback
 
 class Navx:
     
@@ -7,23 +9,36 @@ class Navx:
         
         self.navx = navx._navx.AHRS.create_spi()
 
-    def displayValues(self):
-        
-        """Prints the navx functions that we want to implement. This can be changed based off of how we want these values to be displayed. This can also be implemented after 
-        certain time periods."""
+    @feedback
+    def getXDisplacement(self):
+        return self.navx.getDisplacementX()
 
-        print("X Displacement: ", str(self.navx.getDisplacementX()))
-        print("Y Displacement: ", str(self.navx.getDisplacementY()))
-        print("Z Displacement: ", str(self.navx.getDisplacementZ()))
-        print("Roll: ", str(self.navx.getRoll()))
-        print("Pitch: ", str(self.navx.getPitch()))
-        print("Yaw: ", str(self.navx.getYaw()))
+    @feedback
+    def getYDisplacement(self):
+        return self.navx.getDisplacementY()
+
+    @feedback
+    def getZDisplacement(self):
+        return self.navx.getDisplacementZ()
+    
+    @feedback
+    def getXAngle(self):
+        return self.navx.getRoll()
+
+    @feedback
+    def getYAngle(self):
+        return self.navx.getPitch()
+
+    @feedback
+    def getYaw(self):
+        return self.navx.getYaw()
         
     def reset(self):
         """Resets values to 0 from the current position"""
 
         self.navx.reset()
         self.navx.resetDisplacement()
+        print("Values reset")
 
     def turnToAngle(self):
         """Turn a certain amount of degrees. Could be moved to autonomous."""

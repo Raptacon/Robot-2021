@@ -77,7 +77,7 @@ class MyRobot(MagicRobot):
         """Run when autonomous is enabled."""
         self.shooter.autonomousEnabled()
         self.loader.stopLoading()
-        self.navx.displayValues()
+
 
     def teleopInit(self):
         # Register button events for doof
@@ -94,6 +94,7 @@ class MyRobot(MagicRobot):
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.elevator.stop)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.driveTrain.enableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
+        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperRight, ButtonEvent.kOnPress, self.navx.reset)
         self.shooter.autonomousDisabled()
 
     def teleopPeriodic(self):
@@ -115,8 +116,6 @@ class MyRobot(MagicRobot):
         self.scorpionLoader.checkController()
 
         
-        
-
 
     def testInit(self):
         """
