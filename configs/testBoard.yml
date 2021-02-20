@@ -6,23 +6,23 @@ testMotors:
   shooterMotors:
     groups: "motors"
     testMotor1:
-      channel: 52
-      type: "SparkMax"
+      channel: 30
+      type: "CANTalonFX"
       inverted: True
       motorType: "kBrushless"
 
-      pid:
-        controlType: "Position"
-        kP: 0
-        kI: 0
-        kD: 0
-        kF: 0
-        feedbackDevice: 1
-        kPreScale: 1
-        coastOnZero: False
+      currentLimits:
+        currentLimit: 50
+        triggerThresholdCurrent: 30
+        triggerThresholdTime: 20
+
+    testMotor2:
+      channel: 31
+      type: "CANTalonFX"
+      inverted: True
+      motorType: "kBrushless"
 
       currentLimits:
-        freeLimit: 30
-        stallLimit: 30
-        stallLimitRPM: 50
-        secondaryLimit: 35
+        currentLimit: 50
+        triggerThresholdCurrent: 30
+        triggerThresholdTime: 20
