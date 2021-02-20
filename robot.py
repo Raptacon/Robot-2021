@@ -18,6 +18,7 @@ from components.loaderLogic import LoaderLogic
 from components.elevator import Elevator
 from components.scorpionLoader import ScorpionLoader
 from components.feederMap import FeederMap
+from components.navx import Navx
 
 # Other imports:
 from robotMap import RobotMap, XboxMap
@@ -43,6 +44,7 @@ class MyRobot(MagicRobot):
     pneumatics: Pneumatics
     elevator: Elevator
     scorpionLoader: ScorpionLoader
+    navx: Navx
 
     sensitivityExponent = tunable(1.8)
 
@@ -52,6 +54,7 @@ class MyRobot(MagicRobot):
         """
         self.map = RobotMap()
         self.xboxMap = XboxMap(XboxController(1), XboxController(0))
+
 
         self.instantiateSubsystemGroup("motors", createMotor)
         self.instantiateSubsystemGroup("gyros", gyroFactory)
@@ -68,11 +71,13 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, Pneumatics)
         testComponentCompatibility(self, Elevator)
         testComponentCompatibility(self, ScorpionLoader)
+        testComponentCompatibility(self, Navx)
 
     def autonomousInit(self):
         """Run when autonomous is enabled."""
         self.shooter.autonomousEnabled()
         self.loader.stopLoading()
+        self.navx.displayValues()
 
     def teleopInit(self):
         # Register button events for doof
@@ -89,7 +94,6 @@ class MyRobot(MagicRobot):
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.elevator.stop)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.driveTrain.enableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
-
         self.shooter.autonomousDisabled()
 
     def teleopPeriodic(self):
@@ -126,6 +130,7 @@ class MyRobot(MagicRobot):
         Called during test mode alot
         """
         pass
+        
 
     def instantiateSubsystemGroup(self, groupName, factory):
         """
