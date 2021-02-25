@@ -27,7 +27,6 @@ from utils.motorHelper import createMotor
 from utils.sensorFactories import gyroFactory, breaksensorFactory
 from utils.acturatorFactories import compressorFactory, solenoidFactory
 import utils.math
-import navx
 
 class MyRobot(MagicRobot):
     """
