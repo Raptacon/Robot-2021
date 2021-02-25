@@ -46,3 +46,4 @@ class Navx:
 
     def execute(self):
         pass
+    
