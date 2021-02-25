@@ -30,7 +30,6 @@ import utils.math
 # Test imports:
 from components.testBoard import TestBoard
 
-from ctre import Orchestra
 
 class MyRobot(MagicRobot):
     """
@@ -76,7 +75,6 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, Elevator)
         testComponentCompatibility(self, ScorpionLoader)
 
-        self.musicMan = Orchestra()
 
     def autonomousInit(self):
         """Run when autonomous is enabled."""
@@ -100,11 +98,6 @@ class MyRobot(MagicRobot):
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
 
         self.shooter.autonomousDisabled()
-
-
-        musicMan.addInstrument(self.motors_testMotors['testMotor1'])
-        musicMan.addInstrument(self.motors_testMotors['testMotor2'])
-        musicMan.loadMusic("/home/lvuser/Valkyries.chrp")
 
     def teleopPeriodic(self):
         """
