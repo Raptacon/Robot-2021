@@ -23,7 +23,7 @@ class ConfigMapper(object):
             self.subsystems["compatibility"] = ["any"]
         if not isinstance(root["compatibility"], list):
             root["compatibility"] = [root["compatibility"]]
-        
+
         root["compatibility"] = [x.lower() for x in root["compatibility"]]
 
     def getSubsystem(self, subsystem):
@@ -90,7 +90,7 @@ class ConfigMapper(object):
             typeNames = [typeNames]
         data = self.getSubsystem(subsystem)
         data = self.__getTypes(data, typeNames, name)
-        
+
         return data
 
     def __getGroups(self, data, groupName, name):
@@ -116,7 +116,7 @@ class ConfigMapper(object):
     def __getTypes(self, data, typeNames, name):
         """
         internal call, recusivley search the data for entries with
-        typeName in ["types"] and if a name is given only types 
+        typeName in ["types"] and if a name is given only types
         inside key with name
         """
         retVal = {}
@@ -181,7 +181,7 @@ class ConfigMapper(object):
 
             # copy field over if no special processing
             processedData[subsystem][key] = inputData[key]
-        
+
         return processedData
 
 
@@ -205,7 +205,7 @@ def findConfig():
         configFileName = file.readline().strip()
         file.close()
         configFile = configPath + configFileName
-        
+
         if os.path.isfile(configFile):
             log.info("Using %s config file", configFile)
             return configFileName, configPath
@@ -223,10 +223,10 @@ def findConfig():
 if __name__ == "__main__":
     mapper = ConfigMapper("doof.yml", "configs")
     print("Subsystem driveTrain:", mapper.getSubsystem("driveTrain"))
-    
+
     print("driveTrain Motors")
     pprint(mapper.getGroupDict("driveTrain", "motors"))
-    
+
     print("Shooter motors:")
     pprint(mapper.getGroupDict("shooter", "motors", "loaderMotors"))
 
