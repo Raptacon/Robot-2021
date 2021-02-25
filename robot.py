@@ -76,7 +76,7 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, Elevator)
         testComponentCompatibility(self, ScorpionLoader)
 
-        musicMan = Orchestra()
+        self.musicMan = Orchestra()
 
     def autonomousInit(self):
         """Run when autonomous is enabled."""

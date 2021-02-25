@@ -1,5 +1,6 @@
 
 class TestBoard:
+    compatString = ["testBoard"]
     motors_testMotors: dict
     upSpeed = .1
     downSpeed = .1
@@ -17,6 +18,6 @@ class TestBoard:
 
     def stop(self):
         self.speed = 0
-    
+
     def execute(self):
         self.motor.set(self.speed)
