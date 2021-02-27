@@ -28,6 +28,10 @@ from utils.sensorFactories import gyroFactory, breaksensorFactory
 from utils.acturatorFactories import compressorFactory, solenoidFactory
 import utils.math
 
+# Test imports:
+from components.testBoard import TestBoard
+
+
 class MyRobot(MagicRobot):
     """
     Base robot class of Magic Bot Type
@@ -44,6 +48,9 @@ class MyRobot(MagicRobot):
     elevator: Elevator
     scorpionLoader: ScorpionLoader
     navx: Navx
+
+    # Test code:
+    testBoard: TestBoard
 
     sensitivityExponent = tunable(1.8)
 
@@ -71,6 +78,7 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, Elevator)
         testComponentCompatibility(self, ScorpionLoader)
         testComponentCompatibility(self, Navx)
+
 
     def autonomousInit(self):
         """Run when autonomous is enabled."""
@@ -128,7 +136,6 @@ class MyRobot(MagicRobot):
         Called during test mode alot
         """
         pass
-        
 
     def instantiateSubsystemGroup(self, groupName, factory):
         """
@@ -137,19 +144,19 @@ class MyRobot(MagicRobot):
         """
         config = self.map.configMapper
         containerName = "subsystem" + groupName[0].upper() + groupName[1:]
-        
+
         if not hasattr(self, containerName):
             setattr(self, containerName, {})
             self.subsystemGyros = {}
 
-        #note this is a dicontary refernce, so changes to it
-        #are changes to self.<containerName>
+        # note this is a dicontary refernce, so changes to it
+        # are changes to self.<containerName>
         container = getattr(self, containerName)
 
         subsystems = config.getSubsystems()
         createdCount = 0
         for subsystem in subsystems:
-            items = {key:factory(descp) for (key, descp) in config.getGroupDict(subsystem, groupName).items()}
+            items = {key: factory(descp) for (key, descp) in config.getGroupDict(subsystem, groupName).items()}
             if(len(items) == 0):
                 continue
             container[subsystem] = items
