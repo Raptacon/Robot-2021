@@ -98,9 +98,7 @@ class MyRobot(MagicRobot):
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.driveTrain.enableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperRight, ButtonEvent.kOnPress, self.navx.reset)
-        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kB, ButtonEvent.kOnPress, self.turnToAngle.setNinetyBool)
-        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kX, ButtonEvent.kOnPress, self.turnToAngle.setNegativeNinetyBool)
-        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kY, ButtonEvent.kOnPress, self.turnToAngle.setOneEightyBool)
+        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnPress, self.turnToAngle.output)
         self.shooter.autonomousDisabled()
 
     def teleopPeriodic(self):
