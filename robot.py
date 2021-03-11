@@ -19,6 +19,7 @@ from components.elevator import Elevator
 from components.scorpionLoader import ScorpionLoader
 from components.feederMap import FeederMap
 from components.navx import Navx
+from components.turnToAngle import TurnToAngle
 
 # Other imports:
 from robotMap import RobotMap, XboxMap
@@ -45,6 +46,7 @@ class MyRobot(MagicRobot):
     elevator: Elevator
     scorpionLoader: ScorpionLoader
     navx: Navx
+    turnToAngle: TurnToAngle
 
     sensitivityExponent = tunable(1.8)
 
@@ -72,6 +74,7 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, Elevator)
         testComponentCompatibility(self, ScorpionLoader)
         testComponentCompatibility(self, Navx)
+        testComponentCompatibility(self, TurnToAngle)
 
     def autonomousInit(self):
         """Run when autonomous is enabled."""
@@ -95,6 +98,9 @@ class MyRobot(MagicRobot):
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.driveTrain.enableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperRight, ButtonEvent.kOnPress, self.navx.reset)
+        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kB, ButtonEvent.kOnPress, self.turnToAngle.setNinetyBool)
+        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kX, ButtonEvent.kOnPress, self.turnToAngle.setNegativeNinetyBool)
+        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kY, ButtonEvent.kOnPress, self.turnToAngle.setOneEightyBool)
         self.shooter.autonomousDisabled()
 
     def teleopPeriodic(self):
@@ -112,6 +118,7 @@ class MyRobot(MagicRobot):
             self.winch.setRaise()
         else:
             self.winch.stop()
+
 
         self.scorpionLoader.checkController()
 

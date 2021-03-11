@@ -40,10 +40,6 @@ class Navx:
         self.navx.resetDisplacement()
         print("Values reset")
 
-    def turnToAngle(self):
-        """Turn a certain amount of degrees. Could be moved to autonomous."""
-        pass
-
     def execute(self):
         pass
     
