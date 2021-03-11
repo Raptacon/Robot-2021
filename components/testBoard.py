@@ -1,22 +1,12 @@
 
 class TestBoard:
-    motors_testMotors: dict
+    compatString = ["testBoard"]
     upSpeed = .1
     downSpeed = .1
+    digitalInput_breakSensors: dict
 
     def on_enable(self):
-        self.motor = self.motors_testMotors["testMotor1"]
-        self.speed = 0
-        self.motor.set(self.speed)
-
-    def setRaise(self):
-        self.speed = self.upSpeed
-
-    def setLower(self):
-        self.speed = self.downSpeed
-
-    def stop(self):
-        self.speed = 0
+        self.sensor = self.digitalInput_breakSensors["sensor1"]
     
     def execute(self):
-        self.motor.set(self.speed)
+        return self.sensor.get()

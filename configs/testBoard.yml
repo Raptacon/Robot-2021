@@ -26,3 +26,12 @@ testMotors:
         stallLimit: 30
         stallLimitRPM: 50
         secondaryLimit: 35
+breaksensors:
+  subsystem: "breakSensors"
+  testSensors:
+    groups: "digitalInput"
+    sensor1:
+      type: "RIODigtalin"
+      channel: 9
+
+

@@ -6,6 +6,8 @@ import wpilib
 from wpilib import XboxController
 from magicbot import MagicRobot, tunable
 
+import logging
+
 # Component imports:
 from components.driveTrain import DriveTrain
 from components.pneumatics import Pneumatics
@@ -120,20 +122,13 @@ class MyRobot(MagicRobot):
         """
         Function called when testInit is called.
         """
-        print("testInit was Successful")
+        self.testBoard.on_enable()
 
     def testPeriodic(self):
         """
         Called during test mode alot
         """
-        self.xboxMap.controllerInput()
-
-        if self.xboxMap.getDriveLeft() > 0:
-            self.testBoard.setRaise()
-        elif self.xboxMap.getDriveLeft() < 0:
-            self.testBoard.setLower()
-        else:
-            self.testBoard.stop()
+        logging.info(self.testBoard.execute())
 
     def instantiateSubsystemGroup(self, groupName, factory):
         """

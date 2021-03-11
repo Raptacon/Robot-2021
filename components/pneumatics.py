@@ -3,10 +3,9 @@ dsPos = DoubleSolenoid.Value
 import logging
 
 class Pneumatics:
-    
+    compatString = ["doof"]
     compressors_pneumatics: dict
     solenoids_pneumatics: dict
-    logger: logging
     
 
     def setup(self):
@@ -17,7 +16,7 @@ class Pneumatics:
         self.loaderSolenoid = self.solenoids_pneumatics["loader"]
         self.newLoaderValue = None
         #turn on all compressors
-        self.logger.info("Starting compressor %s", self.compressors_pneumatics["compressor"])
+        logging.info("Starting compressor %s", self.compressors_pneumatics["compressor"])
         self.compressors_pneumatics["compressor"].start()
 
     def getLoaderDeployed(self):
@@ -44,7 +43,7 @@ class Pneumatics:
         """
         Toggle the Loader from deployed to retracted or vice versa
         """
-        self.logger.warning("Changing solenoid")
+        logging.warning("Changing solenoid")
         self.newLoaderValue = (dsPos.kReverse if self.loaderSolenoid.get() == dsPos.kForward else dsPos.kForward)
 
     def getCompressorCurrent(self):
