@@ -15,19 +15,20 @@ class TurnToAngle():
     driveTrain: DriveTrain
     time = 0.01
     PIDController = controller.PIDController(Kp= P, Ki= I, Kd= D, period = time)
-    nextOutput = None
+    nextOutput = 0
 
     def setup(self):
         reset = self.navx.reset()
         self.yaw = self.navx.getYaw()
 
     def output(self):
-        self.nextOutput = controller.PIDController.calculate(measurement = self.navx.getYaw(), setpoint = 90)
+        self.nextOutput = self.PIDController.calculate(measurement = float(self.navx.getYaw()), setpoint = float(90))
 
         if self.nextOutput == 0:
             controller.PIDController.reset()
 
     def execute(self):
+        self.output()
         self.yaw = self.navx.getYaw()
         self.driveTrain.setTank(self.nextOutput, -1 * self.nextOutput)
         print(self.nextOutput)
