@@ -32,13 +32,16 @@ class Navx:
     @feedback
     def getYaw(self):
         return self.navx.getYaw()
+
+    @feedback
+    def getFusedHeading(self):
+        return self.navx.getFusedHeading()
         
     def reset(self):
         """Resets values to 0 from the current position"""
 
         self.navx.reset()
         self.navx.resetDisplacement()
-        print("Values reset")
 
     def execute(self):
         pass
