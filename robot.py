@@ -98,11 +98,7 @@ class MyRobot(MagicRobot):
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.driveTrain.enableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperRight, ButtonEvent.kOnPress, self.navx.reset)
-        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnPress, self.turnToAngle.setIsRunning)
-        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnRelease, self.turnToAngle.stop)
-        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnPress, self.turnToAngle.setIsReturning)
-        #self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnRelease, self.turnToAngle.stop)
-        #self.shooter.autonomousDisabled()
+        self.shooter.autonomousDisabled()
 
     def teleopPeriodic(self):
         """
@@ -113,7 +109,13 @@ class MyRobot(MagicRobot):
         driveLeft = utils.math.expScale(self.xboxMap.getDriveLeft(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
         driveRight = utils.math.expScale(self.xboxMap.getDriveRight(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
 
-        #self.driveTrain.setTank(driveLeft, driveRight)
+        if self.xboxMap.getDriveA() == True:
+            self.turnToAngle.setIsRunning()
+        elif self.xboxMap.getDriveB() == True: 
+            self.turnToAngle.setIsReturning()
+        elif self.xboxMap.getDriveA() == False and self.xboxMap.getDriveB() == False:
+            self.driveTrain.setTank(driveLeft, driveRight)
+            self.turnToAngle.stop()
 
         if self.xboxMap.getMechDPad() == 0:
             self.winch.setRaise()
