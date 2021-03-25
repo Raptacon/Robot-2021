@@ -33,7 +33,10 @@ def breaksensorFactory(descp):
     """
     try:
         if "RIODigitalIn" in descp["type"]:
+            print("Digital Sensor Created")
             return di(descp["channel"])
+        else:
+            print("digital sensor not created, 'RIODigitalIn' is not == "+descp['type'])
 
     except Exception as e:
         logging.error("Failed to create IR Break sensor for %s. Error %s", descp, e)

@@ -6,6 +6,7 @@ class TestBoard:
     digitalInput_breakSensors: dict
 
     def on_enable(self):
+        print("here")
         self.sensor = self.digitalInput_breakSensors["sensor1"]
     
     def execute(self):

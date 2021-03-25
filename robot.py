@@ -123,6 +123,7 @@ class MyRobot(MagicRobot):
         Function called when testInit is called.
         """
         self.testBoard.on_enable()
+        print(self.testBoard.digitalInput_breakSensors)
 
     def testPeriodic(self):
         """

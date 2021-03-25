@@ -31,7 +31,7 @@ breaksensors:
   testSensors:
     groups: "digitalInput"
     sensor1:
-      type: "RIODigtalin"
+      type: "RIODigitalIn"
       channel: 9
 
 
