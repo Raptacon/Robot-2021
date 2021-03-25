@@ -80,13 +80,10 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, Pneumatics)
         testComponentCompatibility(self, Elevator)
         testComponentCompatibility(self, ScorpionLoader)
-<<<<<<< HEAD
         testComponentCompatibility(self, Navx)
         testComponentCompatibility(self, TurnToAngle)
-=======
         testComponentCompatibility(self, TestBoard)
         testComponentCompatibility(self, FeederMap)
->>>>>>> 99247c170dac6b04ae03a7f7d5d71606d6ebc6a5
 
 
     def autonomousInit(self):
@@ -111,8 +108,6 @@ class MyRobot(MagicRobot):
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.driveTrain.enableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperRight, ButtonEvent.kOnPress, self.navx.reset)
-        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnPress, self.turnToAngle.setIsRunning)
-        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnRelease, self.turnToAngle.stop)
         self.shooter.autonomousDisabled()
 
     def teleopPeriodic(self):
@@ -124,15 +119,13 @@ class MyRobot(MagicRobot):
         driveLeft = utils.math.expScale(self.xboxMap.getDriveLeft(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
         driveRight = utils.math.expScale(self.xboxMap.getDriveRight(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
 
-        """
         if self.xboxMap.getDriveA() == True:
             self.turnToAngle.setIsRunning()
-        elif self.xboxMap.getDriveB() == True: 
-            self.turnToAngle.setIsReturning()
-        elif self.xboxMap.getDriveA() == False and self.xboxMap.getDriveB() == False:
+        else:
             self.driveTrain.setTank(driveLeft, driveRight)
             self.turnToAngle.stop()
-        """
+
+
         if self.xboxMap.getMechDPad() == 0:
             self.winch.setRaise()
         else:
@@ -154,9 +147,7 @@ class MyRobot(MagicRobot):
         """
         Called during test mode alot
         """
-<<<<<<< HEAD
         print(str(self.navx.getFusedHeading()))
-        pass
         
         self.xboxMap.controllerInput()
 
@@ -166,9 +157,6 @@ class MyRobot(MagicRobot):
             self.testBoard.setLower()
         else:
             self.testBoard.stop()
-=======
-        pass
->>>>>>> 99247c170dac6b04ae03a7f7d5d71606d6ebc6a5
 
     def instantiateSubsystemGroup(self, groupName, factory):
         """
