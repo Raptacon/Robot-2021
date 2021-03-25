@@ -71,7 +71,7 @@ class MyRobot(MagicRobot):
         self.instantiateSubsystemGroup("compressors", compressorFactory)
         self.instantiateSubsystemGroup("solenoids", solenoidFactory)
 
-        # Check each componet for compatibility
+        # Check each component for compatibility
         testComponentCompatibility(self, ShooterLogic)
         testComponentCompatibility(self, ShooterMotorCreation)
         testComponentCompatibility(self, DriveTrain)
@@ -80,8 +80,13 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, Pneumatics)
         testComponentCompatibility(self, Elevator)
         testComponentCompatibility(self, ScorpionLoader)
+<<<<<<< HEAD
         testComponentCompatibility(self, Navx)
         testComponentCompatibility(self, TurnToAngle)
+=======
+        testComponentCompatibility(self, TestBoard)
+        testComponentCompatibility(self, FeederMap)
+>>>>>>> 99247c170dac6b04ae03a7f7d5d71606d6ebc6a5
 
 
     def autonomousInit(self):
@@ -149,6 +154,7 @@ class MyRobot(MagicRobot):
         """
         Called during test mode alot
         """
+<<<<<<< HEAD
         print(str(self.navx.getFusedHeading()))
         pass
         
@@ -160,6 +166,9 @@ class MyRobot(MagicRobot):
             self.testBoard.setLower()
         else:
             self.testBoard.stop()
+=======
+        pass
+>>>>>>> 99247c170dac6b04ae03a7f7d5d71606d6ebc6a5
 
     def instantiateSubsystemGroup(self, groupName, factory):
         """
