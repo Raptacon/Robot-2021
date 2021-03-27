@@ -24,8 +24,10 @@ class TurnToAngle():
     nextHeading = 0
     heading = 0
     originalHeading = 0
+    orignalNext = 0
     turnAngle = tunable(5)
     speed = tunable(.15)
+    multiplier = tunable(.75)
     tolerance = tunable(1)
 
     def setup(self):
@@ -36,8 +38,9 @@ class TurnToAngle():
 
     def setIsRunning(self):
         self.isRunning = True
-        print(str(self.initialHeading))
         self.nextHeading = self.initialHeading + self.turnAngle
+        if self.nextHeading > 360 and self.heading < self.nextHeading - 360:
+            self.nextHeading -= 360
         #self.PIDController = controller.PIDController(Kp= self.P, Ki= self.I, Kd= self.D, period = self.time)
     
     def setScan(self):
@@ -45,37 +48,31 @@ class TurnToAngle():
 
     def setIsReturning(self):
         self.isReturning = True
-    
+    """
+    def setSpeed(self):
+        if self.nextHeading - self.heading >= 90:
+            self.speed = .25
+        elif self.nextHeading - self.heading < 90 and self.nextHeading - self.heading >= 45:
+            self.speed = .2
+        elif self.nextHeading - self.heading < 45:
+            self.speed = .15
+    """
     def output(self):
         if self.isRunning == True:
-            if self.nextHeading > 360 and self.heading < (self.nextHeading - 360):
-                #self.nextOutput = self.PIDController.calculate(measurement = float(self.heading + 360), setpoint = float(self.nextHeading))
-                if self.heading + 360 > self.nextHeading:
-                    self.nextOutput = self.speed
-                else:
-                    self.nextOutput = -1 * self.speed
-                self.driveTrain.setTank(self.nextOutput, -1 * self.nextOutput)
-            
-            elif self.nextHeading > 360:
-                #self.nextOutput = self.PIDController.calculate(measurement = float(self.heading), setpoint = float(self.nextHeading))
-                if self.heading > self.nextHeading:
-                    self.nextOutput = self.speed
-                else:
-                    self.nextOutput = -1 * self.speed
-                self.driveTrain.setTank(self.nextOutput, -1 * self.nextOutput)
-            
+            if self.nextHeading > 360 or self.nextHeading < 0:
+                self.nextHeading = self.nextHeading % 360
+
+            if self.nextHeading - self.heading < 180:
+                self.driveTrain.setTank(-1 * self.speed, self.speed)
             else:
-                #self.nextOutput = self.PIDController.calculate(measurement = float(self.heading), setpoint = float(self.nextHeading))
-                if self.heading > self.nextHeading:
-                    self.nextOutput = self.speed
-                else:
-                    self.nextOutput = -1 * self.speed
-                self.driveTrain.setTank(self.nextOutput, -1 * self.nextOutput)
-
-            if self.heading < self.nextHeading + self.tolerance and self.heading > self.nextHeading - self.tolerance:
-                self.driveTrain.setTank(0, 0)
-
-
+                self.driveTrain.setTank(self.speed, -1 * self.speed)
+            
+            if (self.heading < self.nextHeading + self.tolerance and self.heading > self.nextHeading - self.tolerance):
+                self.isRunning = False
+                print("At angle")
+            elif (self.heading + 360 < self.nextHeading + 2 * self.tolerance) and (self.heading + 360 > self.nextHeading - 2 * self.tolerance):
+                self.isReturning = False
+                print("stopping")
     @feedback
     def outputDisplay(self):
         return self.nextOutput
@@ -92,6 +89,7 @@ class TurnToAngle():
                 self.output()
                 self.initialHeading = self.heading
 
+    
     def stop(self):
         self.nextOutput = 0
         #self.PIDController.reset()
@@ -108,4 +106,3 @@ class TurnToAngle():
         self.output()
         self.scan()
         self.heading = self.navx.getFusedHeading()
-        print(str(self.nextOutput))

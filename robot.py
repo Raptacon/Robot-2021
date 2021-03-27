@@ -121,8 +121,8 @@ class MyRobot(MagicRobot):
 
         if self.xboxMap.getDriveA() == True:
             self.turnToAngle.setIsRunning()
-        #elif self.xboxMap.getDriveB() == True:
-        #    self.turnToAngle.scanning()
+        elif self.xboxMap.getDriveB() == True:
+            self.turnToAngle.scanning()
         else:
             self.driveTrain.setTank(driveLeft, driveRight)
             self.turnToAngle.stop()
