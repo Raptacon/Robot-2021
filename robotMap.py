@@ -1,15 +1,22 @@
+from opentelemetry.trace import Tracer, propagation 
+from opentelemetry.trace.span import Span
+import opentelemetry.trace.span
 from utils import configMapper
 from wpilib import XboxController
+
 
 class RobotMap():
     """
     Robot map gathers all the hard coded values needed to interface with
     hardware into a single location
     """
-    def __init__(self):
+    def __init__(self, tracer):
         """intilize the robot map"""
-        configFile, configPath = configMapper.findConfig()
-        self.configMapper = configMapper.ConfigMapper(configFile, configPath)
+        with tracer.start_as_current_span("RobotMap") as blah:
+            configFile, configPath = configMapper.findConfig()
+            blah.set_attribute("configFile", configFile)
+            blah.set_attribute("configPath", configPath)
+            self.configMapper = configMapper.ConfigMapper(configFile, configPath)
 
 class XboxMap():
     """

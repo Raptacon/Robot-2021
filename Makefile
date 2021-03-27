@@ -20,7 +20,6 @@ endif
 
 
 sim: setup_${VENV}
-	${VENVBIN}/${PYTHON} robot.py coverage sim
 	${VENVBIN}/${PYTHON} robot.py sim
 
 run:
@@ -45,7 +44,7 @@ setup_${VENV}: ${VENV}
 	${VENVBIN}/pip install --pre -r ${CWD}/requirements.txt
 	$(file > setup_${VENV})
 
-clean:
+clean: 
 	rm -f setup setup_${VENV}
 
 realclean: clean
@@ -59,3 +58,6 @@ docker_build:
 
 deploy:
 	${PYTHON} robot.py deploy --no-resolve --robot 10.32.0.2
+
+jaeger: 
+	docker run -p 16686:16686 -p 6831:6831/udp jaegertracing/all-in-one

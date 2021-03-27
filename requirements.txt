@@ -9,6 +9,12 @@ wheel
 
 robotpy
 
+# OpenTelemetry
+opentelemetry-api
+opentelemetry-sdk
+# For Jaeger exporter
+opentelemetry-exporter-jaeger
+
 # If installed on OSX (joystick support) it seems to fail?
 pyfrc
 robotpy-ctre
