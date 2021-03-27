@@ -20,7 +20,15 @@ driveTrain:
       channel: 30
       type: "CANTalonFX"
       inverted: False
-      pid: Null
+      pid:
+        kP: 0
+        kI: 0
+        kD: 0
+        kF: 0
+        controlType: "Velocity"
+        sensorPhase: True
+        kPreScale: 5
+        feedbackDevice: "IntegratedSensor"
       currentLimits:
         triggerThresholdCurrent: 60
         triggerThresholdTime: 50
@@ -40,7 +48,15 @@ driveTrain:
       channel: 20
       type: "CANTalonFX"
       inverted: False
-      pid: Null
+      pid:
+        kP: 0
+        kI: 0
+        kD: 0
+        kF: 0
+        controlType: "Velocity"
+        sensorPhase: True
+        kPreScale: 50
+        feedbackDevice: "IntegratedSensor"
       currentLimits:
         triggerThresholdCurrent: 60
         triggerThresholdTime: 50
@@ -141,10 +157,6 @@ shooterMotors:
         stallLimit: 30
         stallLimitRPM: 50
         secondaryLimit: 35
-
-lifter:
-  type: "yaml"
-  file: "lifter.yml"
 
 pneumatics:
   type: "yaml"

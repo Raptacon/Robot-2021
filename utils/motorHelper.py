@@ -2,7 +2,7 @@
 
 import rev
 import ctre
-
+import logging as log
 
 def createMotor(motorDescp, motors = {}):
     '''This is where all motors are set up.
@@ -33,7 +33,7 @@ def createMotor(motorDescp, motors = {}):
         else:
             motor = ctre.WPI_TalonFX(motorDescp['channel'])
         setTalonFXCurrentLimits(motor, motorDescp)
-    
+
     elif motorDescp['type'] == 'CANTalonFXFollower':
         '''This is where CANTalon FX Followers are set up'''
         motor =ctre.WPI_TalonFX(motorDescp['channel'])
@@ -137,15 +137,15 @@ class WPI_TalonSRXFeedback(ctre.WPI_TalonSRX):#ctre.wpi_talonsrx.WPI_TalonSRX
             print("Motor channel %d has no PID"%(self.motorDescription['channel']))
             return
         self.pid = self.motorDescription['pid']
-        
+
         #Takes a str and converts it to a ctre enum
         self.controlType = self.pid['controlType']
         if self.controlType == "Position":
             self.controlType = ctre.ControlMode.Position
         elif self.controlType == "Velocity":
             self.controlType = ctre.ControlMode.Velocity
-        
-        
+
+
         self.configSelectedFeedbackSensor(ctre.FeedbackDevice(self.pid['feedbackDevice']), 0, 10)
         self.setSensorPhase(self.pid['sensorPhase'])
         self.ControlType = self.pid['controlType']
@@ -181,16 +181,17 @@ class WPI_TalonFXFeedback(ctre.WPI_TalonFX):
         else:
             self.controlType = ctre.TalonFXControlMode.PercentOutput
 
-    def setupPid(self,motorDescription = None):
+    def setupPid(self, motorDescription = None):
         '''Sets up pid based on the dictionary motorDescription['pid']
-        (Must contain channel, P, I, D, F, control type, sensorPhase (boolean), kPreScale, feedbackDevice)'''
+        (Must contain kP, kI, kD, kF, controlType, sensorPhase (boolean), kPreScale, feedbackDevice)
+        '''
         if not motorDescription:
             motorDescription = self.motorDescription
         if not 'pid' in self.motorDescription:
-            print("Motor channel %d has no PID"%(self.motorDescription['channel']))
+            log.error("Motor channel " + str(self.motorDescription['channel']) + " has no PID")
             return
         self.pid = self.motorDescription['pid']
-        
+
         #Takes a str and converts it to a ctre enum for controltype.
         self.controlType = self.pid['controlType']
         if self.controlType == "Position":
@@ -198,9 +199,16 @@ class WPI_TalonFXFeedback(ctre.WPI_TalonFX):
         elif self.controlType == "Velocity":
             self.controlType = ctre.TalonFXControlMode.Velocity
         else:
-            print("Unrecognized control type: ",self.ControlType)
-        
-        self.configSelectedFeedbackSensor(ctre.FeedbackDevice(self.pid['feedbackDevice']), 0, 10)
+            log.error("Unrecognized control type: " + self.ControlType)
+
+        if self.pid["feedbackDevice"] == "IntegratedSensor":
+            # This is the feedbackDevice for TalonFXs for the integrated sensor
+            feedbackDevice = ctre.FeedbackDevice.IntegratedSensor
+        else:
+            log.error("Unrecognized feedbackDevice " + str(self.pid["feedbackDevice"]))
+            return
+
+        self.configSelectedFeedbackSensor(feedbackDevice, 0, 10)
         self.setSensorPhase(self.pid['sensorPhase'])
         self.kPreScale = self.pid['kPreScale']
 
@@ -210,7 +218,7 @@ class WPI_TalonFXFeedback(ctre.WPI_TalonFX):
         self.configPeakOutputForward(1, 10)
         self.configPeakOutputReverse(-1, 10)
         self.configVelocityMeasurementPeriod(ctre.VelocityMeasPeriod(1), 10)
-        #/* set closed loop gains in slot0 */
+        #/* set closed loop gains in slot 0 */
         self.config_kF(0, self.pid['kF'], 10)
         self.config_kP(0, self.pid['kP'], 10)
         self.config_kI(0, self.pid['kI'], 10)
@@ -218,9 +226,9 @@ class WPI_TalonFXFeedback(ctre.WPI_TalonFX):
 
     def set(self, speed):
         """
-        Overrides the default set() to allow for controll using the pid loop
+        Overrides the default set() to allow for control using the pid loop
         """
-        if self.pid != None:
+        if self.pid:
             return ctre.WPI_TalonFX.set(self, self.controlType, speed * self.kPreScale)
         else:
             return ctre.WPI_TalonFX.set(self, speed)
@@ -247,7 +255,7 @@ class SparkMaxFeedback(rev.CANSparkMax):
         self.pid = self.motorDescription['pid']
         pid = self.pid
         self.ControlType = pid['controlType']
-        
+
         #Turns strings from pid dictionary in config into enums from rev library for control type
         if self.ControlType == "Position":
             self.ControlType = rev.ControlType.kPosition
@@ -274,13 +282,13 @@ class SparkMaxFeedback(rev.CANSparkMax):
         self.PIDController.setI(pid['kI'], pid['feedbackDevice'])
         self.PIDController.setD(pid['kD'], pid['feedbackDevice'])
         self.PIDController.setFF(pid['kF'], pid['feedbackDevice'])
-        
+
         #Generally just a way to overwrite previous settings on any motor controller - We don't brake often.
         if 'IdleBrake' in self.motorDescription.keys() and self.motorDescription['IdleBrake'] == True:
             self.setIdleMode(rev.IdleMode.kBrake)
         else:
             self.setIdleMode(rev.IdleMode.kCoast)
-        
+
         #Configures output range - that's what Spark Maxes accept
         self.PIDController.setOutputRange(-1, 1, pid['feedbackDevice'])
         self.PIDController.setReference(0 , self.ControlType, pid['feedbackDevice'])
