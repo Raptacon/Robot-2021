@@ -21,13 +21,13 @@ driveTrain:
       type: "CANTalonFX"
       inverted: False
       pid:
-        kP: 0
+        kP: 0.001
         kI: 0
         kD: 0
         kF: 0
-        controlType: "Velocity"
+        controlType: "PercentOutput"
         sensorPhase: True
-        kPreScale: 5
+        kPreScale: 2
         feedbackDevice: "IntegratedSensor"
       currentLimits:
         triggerThresholdCurrent: 60
@@ -49,13 +49,14 @@ driveTrain:
       type: "CANTalonFX"
       inverted: False
       pid:
-        kP: 0
+        kP: 0.005
         kI: 0
         kD: 0
         kF: 0
-        controlType: "Velocity"
+        controlType: "PercentOutput"
         sensorPhase: True
-        kPreScale: 50
+        # This is the number of encoder ticks per 1 rotation
+        kPreScale: 2048
         feedbackDevice: "IntegratedSensor"
       currentLimits:
         triggerThresholdCurrent: 60

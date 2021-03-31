@@ -198,8 +198,11 @@ class WPI_TalonFXFeedback(ctre.WPI_TalonFX):
             self.controlType = ctre.TalonFXControlMode.Position
         elif self.controlType == "Velocity":
             self.controlType = ctre.TalonFXControlMode.Velocity
+        elif self.controlType == "PercentOutput":
+            # This is so that we can initialize a motor as percentoutput but also use an encoder
+            self.controlType = ctre.ControlMode.PercentOutput
         else:
-            log.error("Unrecognized control type: " + self.ControlType)
+            log.error("Unrecognized control type: " + str(self.ControlType))
 
         if self.pid["feedbackDevice"] == "IntegratedSensor":
             # This is the feedbackDevice for TalonFXs for the integrated sensor
