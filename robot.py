@@ -140,8 +140,7 @@ class MyRobot(MagicRobot):
         """
         Called during test mode a lot
         """
-        self.lidar.execute()
-        print(self.lidar.bufferArray)
+        print(self.driveTrain.getLeftSideDistTraveled())
 
     def instantiateSubsystemGroup(self, groupName, factory):
         """
