@@ -119,10 +119,8 @@ class MyRobot(MagicRobot):
         driveLeft = utils.math.expScale(self.xboxMap.getDriveLeft(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
         driveRight = utils.math.expScale(self.xboxMap.getDriveRight(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
 
-        if self.xboxMap.getDriveA() == True:
+        if self.xboxMap.getDriveX() == True:
             self.turnToAngle.setIsRunning()
-        elif self.xboxMap.getDriveB() == True:
-            self.turnToAngle.scanning()
         else:
             self.driveTrain.setTank(driveLeft, driveRight)
             self.turnToAngle.stop()
