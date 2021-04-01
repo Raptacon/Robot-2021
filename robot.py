@@ -80,8 +80,6 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, Pneumatics)
         testComponentCompatibility(self, Elevator)
         testComponentCompatibility(self, ScorpionLoader)
-        testComponentCompatibility(self, Navx)
-        testComponentCompatibility(self, TurnToAngle)
         testComponentCompatibility(self, TestBoard)
         testComponentCompatibility(self, FeederMap)
 
