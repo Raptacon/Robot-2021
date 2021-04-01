@@ -1,6 +1,4 @@
-import wpilib
 import navx
-from components.driveTrain import DriveTrain
 from magicbot import feedback
 
 class Navx:
@@ -45,4 +43,3 @@ class Navx:
 
     def execute(self):
         pass
-    
