@@ -1,5 +1,6 @@
-import wpilib.drive
+from utils.Myenum import velocityUnits, positionUnits
 from enum import Enum, auto
+import math
 import logging as log
 
 from magicbot import tunable
@@ -18,6 +19,10 @@ class DriveTrain():
     motors_driveTrain: dict
     driveMotorsMultiplier = tunable(.5)
     gyros_system: dict
+    gearRatio = 10
+    wheelCircumference = 6 * math.pi
+    prevDistTraveledLeft = 0
+    prevDistTraveledRight = 0
 
     def setup(self):
         self.tankLeftSpeed = 0
@@ -71,6 +76,22 @@ class DriveTrain():
 
     def getMeasuredSpeed(self):
         pass
+
+    def getRightSideDistTraveled(self):
+        return (self.rightMotor.getPosition(0, positionUnits.kRotations) / self.gearRatio) * self.wheelCircumference - self.prevDistTraveledRight
+
+    def getLeftSideDistTraveled(self):
+        return (self.leftMotor.getPosition(0, positionUnits.kRotations) / self.gearRatio) * self.wheelCircumference - self.prevDistTraveledLeft
+
+    def resetDistTraveled(self):
+        self.prevDistTraveledLeft = self.getLeftSideDistTraveled()
+        self.prevDistTraveledRight = self.getRightSideDistTraveled()
+
+    def resetLeftDistTraveled(self):
+        self.prevDistTraveledLeft = self.getLeftSideDistTraveled()
+
+    def resetRightDistTraveled(self):
+        self.prevDistTraveledLeft = self.getRightSideDistTraveled()
 
     def execute(self):
         if self.controlMode == ControlMode.kTankDrive:

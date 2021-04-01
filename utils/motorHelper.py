@@ -3,6 +3,7 @@
 import rev
 import ctre
 import logging as log
+from .Myenum import positionUnits, velocityUnits
 
 def createMotor(motorDescp, motors = {}):
     '''This is where all motors are set up.
@@ -226,6 +227,42 @@ class WPI_TalonFXFeedback(ctre.WPI_TalonFX):
         self.config_kP(0, self.pid['kP'], 10)
         self.config_kI(0, self.pid['kI'], 10)
         self.config_kD(0, self.pid['kD'], 10)
+
+        self.sensorCollection = self.getSensorCollection()
+
+    def getPosition(self, pidId, units: positionUnits):
+        """
+        pidId: The ID of the pid config
+        (0 for primary, 1 for auxilliary)
+
+        Returns the integrated sensor's current position in
+        encoder ticks (2048 per 1 rotation)
+        """
+        if units == positionUnits.kEncoderTicks:
+            self.position = self.sensorCollection.getIntegratedSensorPosition()
+        elif units == positionUnits.kRotations:
+            self.position = self.sensorCollection.getIntegratedSensorPosition() / 2048
+        return self.position
+
+    def getVelocity(self, pidId, units: velocityUnits):
+        """
+        pidId: The ID of the pid config
+        (0 for primary, 1 for auxilliary)
+        units:
+
+        Returns the integrated sensor's current velocity in
+        encoder ticks / 100 ms (2048 encoder ticks per 1 rotation)
+        """
+        if units == velocityUnits.kEncoderTicksPer100:
+            self.velocity = self.sensorCollection.getIntegratedSensorVelocity()
+        elif units == velocityUnits.kRPS:
+            self.velocity = (10 * self.sensorCollection.getIntegratedSensorVelocity()) / 2048
+        elif units == velocityUnits.kRPM:
+            self.velocity = (self.sensorCollection.getIntegratedSensorVelocity() / 2048) / 600
+        else:
+            return "Unrecognized unit"
+
+        return self.velocity
 
     def set(self, speed):
         """
