@@ -1,6 +1,7 @@
 from utils.Myenum import velocityUnits, positionUnits
 from enum import Enum, auto
 import math
+import wpilib.drive
 import logging as log
 
 from magicbot import tunable
@@ -78,14 +79,20 @@ class DriveTrain():
         pass
 
     def getRightSideDistTraveled(self):
-        return (self.rightMotor.getPosition(0, positionUnits.kRotations) / self.gearRatio) * self.wheelCircumference - self.prevDistTraveledRight
+        self.distInch = (self.rightMotor.getPosition(0, positionUnits.kRotations) / self.gearRatio) * self.wheelCircumference - self.prevDistTraveledRight
+        return self.distInch# / 12
 
     def getLeftSideDistTraveled(self):
-        return (self.leftMotor.getPosition(0, positionUnits.kRotations) / self.gearRatio) * self.wheelCircumference - self.prevDistTraveledLeft
+        self.distInch = (self.leftMotor.getPosition(0, positionUnits.kRotations) / self.gearRatio) * self.wheelCircumference - self.prevDistTraveledLeft
+        return self.distInch# / 12
+
+    def getEstTotalDistTraveled(self):
+        return (self.getLeftSideDistTraveled() + self.getRightSideDistTraveled()) / 2
 
     def resetDistTraveled(self):
-        self.prevDistTraveledLeft = self.getLeftSideDistTraveled()
-        self.prevDistTraveledRight = self.getRightSideDistTraveled()
+        self.prevDistTraveledLeft = self.getLeftSideDistTraveled() + self.prevDistTraveledLeft
+        self.prevDistTraveledRight = self.getRightSideDistTraveled() + self.prevDistTraveledRight
+
 
     def resetLeftDistTraveled(self):
         self.prevDistTraveledLeft = self.getLeftSideDistTraveled()

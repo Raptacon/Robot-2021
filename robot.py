@@ -96,6 +96,8 @@ class MyRobot(MagicRobot):
 
     def teleopInit(self):
         # Register button events for doof
+        self.driveTrain.resetDistTraveled()
+
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kX, ButtonEvent.kOnPress, self.pneumatics.toggleLoader)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kY, ButtonEvent.kOnPress, self.loader.setAutoLoading)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kB, ButtonEvent.kOnPress, self.loader.setManualLoading)
@@ -128,6 +130,7 @@ class MyRobot(MagicRobot):
         else:
             self.winch.stop()
 
+        print(self.driveTrain.estTotalDistTraveled())
         self.scorpionLoader.checkController()
 
     def testInit(self):
@@ -140,7 +143,7 @@ class MyRobot(MagicRobot):
         """
         Called during test mode a lot
         """
-        print(self.driveTrain.getLeftSideDistTraveled())
+        pass
 
     def instantiateSubsystemGroup(self, groupName, factory):
         """
