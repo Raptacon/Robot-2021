@@ -7,8 +7,8 @@ import navx
 class TurnToAngle():
 
     #PID
-    P = tunable(0.04)
-    I = tunable(0)
+    P = tunable(0.01)
+    I = tunable(0.01)
     D = tunable(0)
     time = 0.01
     PIDController = None
@@ -22,8 +22,8 @@ class TurnToAngle():
     heading = 0
     originalHeading = 0
     turnAngle = tunable(10)
-    speed = tunable(.15)
-    tolerance = tunable(2.5)
+    speed = 0
+    tolerance = tunable(.5)
     change = 0
     setSpeed = True
 
@@ -53,6 +53,13 @@ class TurnToAngle():
             elif self.change < -180:
                 self.change += 360
             
+            if abs(self.change) > 90:
+                self.speed = .25
+            elif abs(self.change) <= 90 and abs(self.change) > 20:
+                self.speed = .15
+            elif abs(self.change) <= 20:
+                self.speed = .09
+
             if self.setSpeed == True:
                 if self.change > 0:
                     self.driveTrain.setTank(-1 * self.speed, self.speed)
@@ -90,6 +97,5 @@ class TurnToAngle():
 
     def execute(self):
         self.output()
-        self.scan()
         self.PIDController = controller.PIDController(Kp= self.P, Ki= self.I, Kd= self.D, period = self.time)
         self.heading = self.navx.getFusedHeading()
