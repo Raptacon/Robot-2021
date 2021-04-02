@@ -60,4 +60,4 @@ deploy:
 	${PYTHON} robot.py deploy --no-resolve --robot 10.32.0.2
 
 jaeger: 
-	docker run -p 16686:16686 -p 6831:6831/udp jaegertracing/all-in-one
+	docker run -p 16686:16686 -p 6831:6831/udp -d jaegertracing/all-in-one 
