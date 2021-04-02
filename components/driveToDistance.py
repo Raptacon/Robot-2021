@@ -51,11 +51,13 @@ class DriveToDistance(StateMachine):
         """
         if self.lidar.getDist() == -1:
             log.info("Lidar is at max dist")
+            self.stop()
             self.next_state('idling')
         else:
             self.driveDistance = self.initialPosition - self.distanceSet
             if self.driveDistance < 0:
                 log.error("Distance setpoint is greater than current position - Don't do that")
+                self.stop()
                 self.next_state('idling')
             else:
                 self.next_state('drive')
