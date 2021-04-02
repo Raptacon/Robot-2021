@@ -54,6 +54,7 @@ class Lidar:
 
     def getDist(self):
         if self.dist > 65500:
+            log.error("distance from the lidar is to high")
             self.dist = -1
         return self.dist
 
