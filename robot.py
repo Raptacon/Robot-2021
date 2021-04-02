@@ -4,6 +4,7 @@ Team 3200 Robot base class
 # Module imports:
 import wpilib
 from wpilib import XboxController
+from wpilib import SerialPort
 from magicbot import MagicRobot, tunable
 
 # Component imports:
@@ -23,6 +24,8 @@ from components.autoShoot import AutoShoot
 
 # Other imports:
 from robotMap import RobotMap, XboxMap
+from components.lidar import Lidar
+from networktables import NetworkTables
 from utils.componentUtils import testComponentCompatibility
 from utils.motorHelper import createMotor
 from utils.sensorFactories import gyroFactory, breaksensorFactory
@@ -50,6 +53,7 @@ class MyRobot(MagicRobot):
     scorpionLoader: ScorpionLoader
     autoAlign: AutoAlign
     autoShoot: AutoShoot
+    lidar: Lidar
 
     # Test code:
     testBoard: TestBoard
@@ -62,6 +66,19 @@ class MyRobot(MagicRobot):
         """
         self.map = RobotMap()
         self.xboxMap = XboxMap(XboxController(1), XboxController(0))
+
+        ReadBufferValue = 18
+        self.map = RobotMap()
+        self.xboxMap = XboxMap(XboxController(1), XboxController(0))
+
+        self.MXPserial = SerialPort(115200, SerialPort.Port.kMXP, 8,
+        SerialPort.Parity.kParity_None, SerialPort.StopBits.kStopBits_One)
+        self.MXPserial.setReadBufferSize(ReadBufferValue)
+        self.MXPserial.setWriteBufferSize(2 * ReadBufferValue)
+        self.MXPserial.setWriteBufferMode(SerialPort.WriteBufferMode.kFlushOnAccess)
+        self.MXPserial.setTimeout(.1)
+
+        self.smartDashboardTable = NetworkTables.getTable('SmartDashboard')
 
         self.instantiateSubsystemGroup("motors", createMotor)
         self.instantiateSubsystemGroup("gyros", gyroFactory)
@@ -79,9 +96,11 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, Elevator)
         testComponentCompatibility(self, ScorpionLoader)
         testComponentCompatibility(self, AutoAlign)
-        testComponentCompatibility(self, TestBoard)
         testComponentCompatibility(self, AutoShoot)
         testComponentCompatibility(self, FeederMap)
+        testComponentCompatibility(self, TestBoard)
+        testComponentCompatibility(self, Lidar)
+        testComponentCompatibility(self, LoaderLogic)
 
 
     def autonomousInit(self):
