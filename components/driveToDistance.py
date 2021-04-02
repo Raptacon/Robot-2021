@@ -10,25 +10,25 @@ class DriveToDistance(StateMachine):
 
     def on_enable(self):
         """Called when bot is enabled."""
-        self.speed = .09
+        self.speed = -.15
         self.distanceSet = 0
-        self.start = False
+        self.starting = False
         self.running = False
 
     def start(self):
         """
-        Sets the start variable to true,
+        Sets the starting variable to true,
         this should trigger the stateMachine on
         the next idling run
         """
-        self.start = True
+        self.starting = True
 
-    @state
+    @state(first=True)
     def idling(self):
         """
-        Puts driveToDistance int "idling"
+        Starts the state machine if starting and not running
         """
-        if self.start and self.running == False and self.distanceSet != 0:
+        if self.starting and self.running == False and self.distanceSet != 0:
             self.next_state('setInitialPosition')
         else:
             self.next_state('idling')
@@ -38,7 +38,7 @@ class DriveToDistance(StateMachine):
         """
         Sets the initial potion of the robot
         """
-        self.start = False
+        self.starting = False
         self.running = True
         self.initialPosition = self.lidar.getDist()
         self.next_state('StartDrive')
@@ -50,7 +50,7 @@ class DriveToDistance(StateMachine):
         calcutes the values that the lidar must read to drive a certain distance
         """
         if self.lidar.getDist() == -1:
-            log.info("Lidar is at max dist")
+            log.error("Lidar is at max dist")
             self.stop()
             self.next_state('idling')
         else:
@@ -67,12 +67,11 @@ class DriveToDistance(StateMachine):
         """
         Drives the robot and checks if the robot has driven to the correct postion
         """
-        self.driveTrain.setTank(self.speed, self.speed)
-        if self.lidar.getDist() >= self.distanceSet:
+        self.driveTrain.setArcade(self.speed, 0)
+        if self.lidar.getDist() <= self.distanceSet:
             self.stop()
         else:
             self.next_state('drive')
-
     def stop(self):
         """
         Stops the drivetrain and sets the setpoint to 0
@@ -91,6 +90,6 @@ class DriveToDistance(StateMachine):
         if distanceSet <= 30:
             log.error("Invalid Distance given to robot")
             self.distanceSet = 0
-            self.start = False
+            self.starting = False
         else:
             self.distanceSet = distanceSet

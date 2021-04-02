@@ -33,6 +33,7 @@ import utils.math
 
 # Test imports:
 from components.testBoard import TestBoard
+import logging as log
 
 
 class MyRobot(MagicRobot):
@@ -133,8 +134,17 @@ class MyRobot(MagicRobot):
         driveLeft = utils.math.expScale(self.xboxMap.getDriveLeft(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
         driveRight = utils.math.expScale(self.xboxMap.getDriveRight(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
 
-        if self.xboxMap.getDriveA() == True:
+        self.smartDashboardTable.putNumber("LidarDist", self.lidar.getDist())
+
+        if self.xboxMap.drive.getXButton() == True:
+            log.info("Executing drive command")
             executingDriveCommand = True
+            self.driveToDistance.engage()
+            self.driveToDistance.setDistance(40)
+            self.driveToDistance.start()
+        else:
+            log.info("Not executing drive command")
+            executingDriveCommand = False
 
         if not executingDriveCommand:
             self.driveTrain.setTank(driveLeft, driveRight)
