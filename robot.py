@@ -11,6 +11,9 @@ from opentelemetry.sdk.trace.export import (
 # Exporter
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+# Explicit parent span assignment is done via the Context
+from opentelemetry.trace import set_span_in_context
+
 # jaeger_example.py
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
 trace.set_tracer_provider(
@@ -88,25 +91,26 @@ class MyRobot(MagicRobot):
         #trace.get_tracer_provider().add_span_processor(
         #    SimpleSpanProcessor(ConsoleSpanExporter())
         #)
-        with tracer.start_as_current_span("robot.py"):
+        with tracer.start_as_current_span("robot.py") as child:
         #with tracer.start_as_current_span("bar"):
         #  with tracer.start_as_current_span("baz"):
         #      print("Hello world from OpenTelemetry Python!")
         ###
+            self.tracer = tracer
             ReadBufferValue = 18
             self.map = RobotMap(tracer)
-            self.xboxMap = XboxMap(XboxController(1), XboxController(0))
+            self.xboxMap = XboxMap(tracer, XboxController(1), XboxController(0))
 
             self.MXPserial = SerialPort(115200, SerialPort.Port.kMXP, 8,
             SerialPort.Parity.kParity_None, SerialPort.StopBits.kStopBits_One)
             self.MXPserial.setReadBufferSize(ReadBufferValue)
             self.MXPserial.setTimeout(1)
 
-            self.instantiateSubsystemGroup("motors", createMotor)
-            self.instantiateSubsystemGroup("gyros", gyroFactory)
-            self.instantiateSubsystemGroup("digitalInput", breaksensorFactory)
-            self.instantiateSubsystemGroup("compressors", compressorFactory)
-            self.instantiateSubsystemGroup("solenoids", solenoidFactory)
+            self.instantiateSubsystemGroup(tracer, "motors", createMotor)
+            self.instantiateSubsystemGroup(tracer, "gyros", gyroFactory)
+            self.instantiateSubsystemGroup(tracer, "digitalInput", breaksensorFactory)
+            self.instantiateSubsystemGroup(tracer, "compressors", compressorFactory)
+            self.instantiateSubsystemGroup(tracer, "solenoids", solenoidFactory)
 
             # Check each component for compatibility
             testComponentCompatibility(self, ShooterLogic)
@@ -125,26 +129,28 @@ class MyRobot(MagicRobot):
 
     def autonomousInit(self):
         """Run when autonomous is enabled."""
-        self.shooter.autonomousEnabled()
-        self.loader.stopLoading()
+        with self.tracer.start_as_current_span("autonomousInit") as child:
+            self.shooter.autonomousEnabled()
+            self.loader.stopLoading()
 
     def teleopInit(self):
-        # Register button events for doof
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kX, ButtonEvent.kOnPress, self.pneumatics.toggleLoader)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kY, ButtonEvent.kOnPress, self.loader.setAutoLoading)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kB, ButtonEvent.kOnPress, self.loader.setManualLoading)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnPress, self.shooter.shootBalls)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnPress, self.loader.stopLoading)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnRelease, self.shooter.doneShooting)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnRelease, self.loader.determineNextAction)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperRight, ButtonEvent.kOnPress, self.elevator.setRaise)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperRight, ButtonEvent.kOnRelease, self.elevator.stop)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.elevator.setLower)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.elevator.stop)
-        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.driveTrain.enableCreeperMode)
-        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
+        with self.tracer.start_as_current_span("teleopInit") as child:
+            # Register button events for doof
+            self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kX, ButtonEvent.kOnPress, self.pneumatics.toggleLoader)
+            self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kY, ButtonEvent.kOnPress, self.loader.setAutoLoading)
+            self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kB, ButtonEvent.kOnPress, self.loader.setManualLoading)
+            self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnPress, self.shooter.shootBalls)
+            self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnPress, self.loader.stopLoading)
+            self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnRelease, self.shooter.doneShooting)
+            self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnRelease, self.loader.determineNextAction)
+            self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperRight, ButtonEvent.kOnPress, self.elevator.setRaise)
+            self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperRight, ButtonEvent.kOnRelease, self.elevator.stop)
+            self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.elevator.setLower)
+            self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.elevator.stop)
+            self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.driveTrain.enableCreeperMode)
+            self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
 
-        self.shooter.autonomousDisabled()
+            self.shooter.autonomousDisabled()
 
     def teleopPeriodic(self):
         """
@@ -177,35 +183,41 @@ class MyRobot(MagicRobot):
         self.lidar.execute()
         print(self.lidar.bufferArray)
 
-    def instantiateSubsystemGroup(self, groupName, factory):
+    def instantiateSubsystemGroup(self, tracer, groupName, factory):
         """
         For each subsystem find all groupNames and call factory.
         Each one is saved to groupName_subsystem and subsystem_groupName
         """
-        config = self.map.configMapper
-        containerName = "subsystem" + groupName[0].upper() + groupName[1:]
+        with tracer.start_as_current_span("instantiateSubsystemGroup") as child:
+            config = self.map.configMapper
+            child.set_attribute("config", config)
+            containerName = "subsystem" + groupName[0].upper() + groupName[1:]
+            child.set_attribute("containerName", containerName)
 
-        if not hasattr(self, containerName):
-            setattr(self, containerName, {})
-            self.subsystemGyros = {}
+            if not hasattr(self, containerName):
+                setattr(self, containerName, {})
+                self.subsystemGyros = {}
 
-        # note this is a dicontary refernce, so changes to it
-        # are changes to self.<containerName>
-        container = getattr(self, containerName)
+            # note this is a dicontary refernce, so changes to it
+            # are changes to self.<containerName>
+            container = getattr(self, containerName)
 
-        subsystems = config.getSubsystems()
-        createdCount = 0
-        for subsystem in subsystems:
-            items = {key: factory(descp) for (key, descp) in config.getGroupDict(subsystem, groupName).items()}
-            if(len(items) == 0):
-                continue
-            container[subsystem] = items
-            createdCount += len(container[subsystem])
-            groupName_subsystem = "_".join([groupName,subsystem])
-            self.logger.info("Creating %s", groupName_subsystem)
-            setattr(self, groupName_subsystem, container[subsystem])
+            subsystems = config.getSubsystems()
+            child.set_attribute("subsystems", subsystems)
 
-        self.logger.info(f"Created {createdCount} items for {groupName} groups with `{factory.__name__}` into `{containerName}")
+            createdCount = 0
+            for subsystem in subsystems:
+                items = {key: factory(descp) for (key, descp) in config.getGroupDict(subsystem, groupName).items()}
+                if(len(items) == 0):
+                    continue
+                container[subsystem] = items
+                createdCount += len(container[subsystem])
+                groupName_subsystem = "_".join([groupName,subsystem])
+                self.logger.info("Creating %s", groupName_subsystem)
+                setattr(self, groupName_subsystem, container[subsystem])
+                child.add_event("Created " + groupName_subsystem)
+
+            self.logger.info(f"Created {createdCount} items for {groupName} groups with `{factory.__name__}` into `{containerName}")
 
 
 if __name__ == '__main__':

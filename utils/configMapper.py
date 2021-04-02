@@ -6,25 +6,31 @@ from pathlib import Path
 
 
 class ConfigMapper(object):
-    def __init__(self, filename, configDir):
+    def __init__(self, tracer, filename, configDir):
         """
         Initlizes the config off a tree of yamls.
         "/" holds global config
         "<subsystem>" holds configs for subsystems
         configDir points to folder with configs. Future work make it take a list and search.
         """
-        self.configDir = configDir
-        initialData = self.__loadFile(filename)
-        log.debug("Intial data %s", initialData)
-        self.subsystems = self.__convertToSubsystems(initialData, "/")
-        root = self.subsystems["/"]
-        if "compatibility" not in root:
-            log.warning("No Compatibility string found. Matching all")
-            self.subsystems["compatibility"] = ["any"]
-        if not isinstance(root["compatibility"], list):
-            root["compatibility"] = [root["compatibility"]]
+        with tracer.start_as_current_span("ConfigMapper") as child:
+            self.configDir = configDir
+            initialData = self.__loadFile(filename)
+            child.set_attribute("initialData", initialData)
+            log.debug("Intial data %s", initialData)
+            self.subsystems = self.__convertToSubsystems(initialData, "/")
+            root = self.subsystems["/"]
+            if "compatibility" not in root:
+                child.add_event("No Compatibility string found. Matching all")
+                log.warning("No Compatibility string found. Matching all")
+                self.subsystems["compatibility"] = ["any"]
+                child.set_attribute("self.subsystems[\"compatibility\"]", self.subsystems["compatibility"])
+            if not isinstance(root["compatibility"], list):
+                root["compatibility"] = [root["compatibility"]]
+                child.set_attribute("root[\"compatibility\"]", root["compatibility"])
 
-        root["compatibility"] = [x.lower() for x in root["compatibility"]]
+            root["compatibility"] = [x.lower() for x in root["compatibility"]]
+            child.set_attribute("root[\"compatibility\"]", root["compatibility"])
 
     def getSubsystem(self, subsystem):
         """

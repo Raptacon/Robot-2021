@@ -12,21 +12,22 @@ class RobotMap():
     """
     def __init__(self, tracer):
         """intilize the robot map"""
-        with tracer.start_as_current_span("RobotMap") as blah:
+        with tracer.start_as_current_span("RobotMap") as child:
             configFile, configPath = configMapper.findConfig()
-            blah.set_attribute("configFile", configFile)
-            blah.set_attribute("configPath", configPath)
-            self.configMapper = configMapper.ConfigMapper(configFile, configPath)
+            child.set_attribute("configFile", configFile)
+            child.set_attribute("configPath", configPath)
+            self.configMapper = configMapper.ConfigMapper(tracer, configFile, configPath)
 
 class XboxMap():
     """
     Holds the mappings to TWO Xbox controllers, one for driving, one for mechanisms
     """
-    def __init__(self, Xbox1: XboxController, Xbox2: XboxController):
-        self.drive = Xbox1
-        self.mech = Xbox2
-        self.controllerInput()
-        #Button mappings
+    def __init__(self, tracer, Xbox1: XboxController, Xbox2: XboxController):
+        with tracer.start_as_current_span("XboxMap") as child:
+            self.drive = Xbox1
+            self.mech = Xbox2
+            self.controllerInput()
+            #Button mappings
 
     def controllerInput(self):
         """
