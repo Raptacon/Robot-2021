@@ -20,6 +20,7 @@ from components.elevator import Elevator
 from components.scorpionLoader import ScorpionLoader
 from components.feederMap import FeederMap
 from components.lidar import Lidar
+from components.driveToDistance import DriveToDistance
 
 # Other imports:
 from robotMap import RobotMap, XboxMap
@@ -50,6 +51,7 @@ class MyRobot(MagicRobot):
     elevator: Elevator
     scorpionLoader: ScorpionLoader
     lidar: Lidar
+    driveToDistance: DriveToDistance
 
     # Test code:
     testBoard: TestBoard
@@ -92,6 +94,7 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, FeederMap)
         testComponentCompatibility(self, Lidar)
         testComponentCompatibility(self, LoaderLogic)
+        testComponentCompatibility(self, DriveToDistance)
 
 
     def autonomousInit(self):
@@ -112,8 +115,11 @@ class MyRobot(MagicRobot):
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperRight, ButtonEvent.kOnRelease, self.elevator.stop)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.elevator.setLower)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.elevator.stop)
+        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kX, ButtonEvent.kOnPress, self.driveToDistance.start)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.driveTrain.enableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
+
+        self.driveToDistance.setDistance(50)
 
         self.shooter.autonomousDisabled()
 
@@ -134,9 +140,6 @@ class MyRobot(MagicRobot):
             self.winch.stop()
 
         self.scorpionLoader.checkController()
-
-        print(self.lidar.bufferArray)
-        print(self.lidar.getDist())
 
     def testInit(self):
         """
