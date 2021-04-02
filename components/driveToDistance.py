@@ -68,7 +68,7 @@ class DriveToDistance(StateMachine):
         Drives the robot and checks if the robot has driven to the correct postion
         """
         self.driveTrain.setTank(self.speed, self.speed)
-        if self.distanceSet <= self.lidar.getDist():
+        if self.lidar.getDist() >= self.distanceSet:
             self.stop()
         else:
             self.next_state('drive')
