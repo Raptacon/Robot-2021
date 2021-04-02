@@ -67,11 +67,15 @@ class MyRobot(MagicRobot):
         self.MXPserial = SerialPort(115200, SerialPort.Port.kMXP, 8,
         SerialPort.Parity.kParity_None, SerialPort.StopBits.kStopBits_One)
         self.MXPserial.setReadBufferSize(ReadBufferValue)
+<<<<<<< HEAD
         self.MXPserial.setWriteBufferSize(2 * ReadBufferValue)
         self.MXPserial.setWriteBufferMode(SerialPort.WriteBufferMode.kFlushOnAccess)
         self.MXPserial.setTimeout(.1)
 
         self.smartDashboardTable = NetworkTables.getTable('SmartDashboard')
+=======
+        self.MXPserial.setTimeout(1)
+>>>>>>> parent of 6d142de (Merge branch 'lidarTest' of https://github.com/Raptacon/Robot-2021 into lidarTest)
 
         self.instantiateSubsystemGroup("motors", createMotor)
         self.instantiateSubsystemGroup("gyros", gyroFactory)
@@ -149,9 +153,13 @@ class MyRobot(MagicRobot):
         Called during test mode a lot
         """
         self.lidar.execute()
+<<<<<<< HEAD
         self.MXPserial.reset()
         self.MXPserial.flush()
         self.smartDashboardTable.putNumber("Lidar Dist", self.lidar.getDist())
+=======
+        print(self.lidar.bufferArray)
+>>>>>>> parent of 6d142de (Merge branch 'lidarTest' of https://github.com/Raptacon/Robot-2021 into lidarTest)
 
     def instantiateSubsystemGroup(self, groupName, factory):
         """
