@@ -114,16 +114,18 @@ class MyRobot(MagicRobot):
         """
         self.xboxMap.controllerInput()
 
-        driveLeft = utils.math.expScale(self.xboxMap.getDriveLeft(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
-        driveRight = utils.math.expScale(self.xboxMap.getDriveRight(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
+        driveLeftY = utils.math.expScale(self.xboxMap.getDriveLeft(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
+        driveRightY = utils.math.expScale(self.xboxMap.getDriveRight(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
+        driveLeftX = utils.math.expScale(self.xboxMap.getDriveLeftHoriz(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
+        driveRightX = utils.math.expScale(self.xboxMap.getDriveRightHoriz(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
 
         if self.xboxMap.getDriveX() == True:
             self.turnToAngle.setIsRunning()
         else:
-            if arcadeMode:
-                self.driveTrain.setArcade(driveLeft, driveRight)
+            if self.arcadeMode:
+                self.driveTrain.setArcade(driveLeftY, -1 * driveRightX)
             else:
-                self.driveTrain.setTank(driveLeft, driveRight)
+                self.driveTrain.setTank(driveLeftY, driveRightY)
             self.turnToAngle.stop()
 
         self.scorpionLoader.checkController()
