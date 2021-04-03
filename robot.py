@@ -173,16 +173,7 @@ class MyRobot(MagicRobot):
         """
         Called during test mode alot
         """
-        print(str(self.navx.getFusedHeading()))
-
-        self.xboxMap.controllerInput()
-
-        if self.xboxMap.getDriveLeft() > 0:
-            self.testBoard.setRaise()
-        elif self.xboxMap.getDriveLeft() < 0:
-            self.testBoard.setLower()
-        else:
-            self.testBoard.stop()
+        pass
 
     def instantiateSubsystemGroup(self, groupName, factory):
         """
