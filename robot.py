@@ -4,7 +4,6 @@ Team 3200 Robot base class
 # Module imports:
 import wpilib
 from wpilib import XboxController
-from wpilib import interfaces
 from wpilib import SerialPort
 from magicbot import MagicRobot, tunable
 
@@ -129,6 +128,8 @@ class MyRobot(MagicRobot):
 
         self.MXPserial.flush()
         self.driveTrain.resetDistTraveled()
+
+        self.goToDist.setTargetDist(120)
 
         self.shooter.autonomousDisabled()
 
