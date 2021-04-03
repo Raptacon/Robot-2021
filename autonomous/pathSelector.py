@@ -1,8 +1,8 @@
 import navx
-from magicbot import tunable, AutonomousStateMachine, feedback
+from magicbot import tunable, AutonomousStateMachine, feedback, state, timed_state
 
 
-class PathSelector():
+class PathSelector(AutonomousStateMachine):
     MODE_NAME = "Path Follower"
     navx = navx._navx.AHRS.create_spi()
     path = None
@@ -12,18 +12,16 @@ class PathSelector():
     blueBAngle = 11.3
     heading = 0
     difference = 0
-    originalHeading = 0 #tunable(352)
+    originalHeading = tunable(352)
+    pathInt = 0
 
-    compatString = ["doof"]
     
-    """
-    def on_enable(self):
-        pass
-    """
-    def setup(self):
-        self.heading = self.navx.getFusedHeading
-        self.originalHeading = self.navx.getFusedHeading
-
+    @state(first = True)
+    def variableSetup(self):
+        self.heading = self.navx.getFusedHeading()
+        self.next_state('selector')
+    
+    @state(must_finish = True)
     def selector(self):
         self.difference = self.heading - self.originalHeading
 
@@ -32,23 +30,30 @@ class PathSelector():
         if self.difference < -180:
             self.difference += 360
 
-        if self.difference < redAAngle - 2.5 and self.difference > redAAngle + 2.5:
+        if self.difference < self.redAAngle - 2.5 and self.difference > self.redAAngle + 2.5:
             self.path = "Red A"
+            self.pathInt = 1
             print("Red A")
-        elif self.difference < redBAngle + 2.5 and self.difference > redBAngle - 2.5:
+        elif self.difference < self.redBAngle + 2.5 and self.difference > self.redBAngle - 2.5:
             self.path = "Red B"
+            self.pathInt = 2
             print("Red B")
-        elif self.difference < blueAAngle - 2.5 and self.difference > blueAAngle + 2.5:
+        elif self.difference < self.blueAAngle - 2.5 and self.difference > self.blueAAngle + 2.5:
             self.path = "Blue A"
+            self.pathInt = 3
             print("Blue A")
-        elif self.difference < blueBAngle - 2.5 and self.difference > blueBAnlge + 2.5:
+        elif self.difference < self.blueBAngle - 2.5 and self.difference > self.blueBAgnle + 2.5:
             self.path = "Blue B"
+            self.pathInt = 4
             print("Blue B")
+        
+        self.next_state('stop')
 
     @feedback
     def pathDisplay(self):
-        return self.path
+        return self.pathInt
+    
+    @state(must_finish = True)
+    def stop(self):
+        self.done()
 
-    def execute(self):
-        self.path
-        self.heading = self.navx.getFusedHeading
