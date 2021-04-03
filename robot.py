@@ -55,6 +55,7 @@ class MyRobot(MagicRobot):
     testBoard: TestBoard
 
     sensitivityExponent = tunable(1.8)
+    arcadeMode = tunable(False)
 
     def createObjects(self):
         """
@@ -119,25 +120,21 @@ class MyRobot(MagicRobot):
         if self.xboxMap.getDriveX() == True:
             self.turnToAngle.setIsRunning()
         else:
-            self.driveTrain.setTank(driveLeft, driveRight)
+            if arcadeMode:
+                self.driveTrain.setArcade(driveLeft, driveRight)
+            else:
+                self.driveTrain.setTank(driveLeft, driveRight)
             self.turnToAngle.stop()
-
-
-        if self.xboxMap.getMechDPad() == 0:
-            self.winch.setRaise()
-        else:
-            self.winch.stop()
-
 
         self.scorpionLoader.checkController()
 
-        
+
 
     def testInit(self):
         """
         Function called when testInit is called.
         """
-        
+
         print("testInit was Successful")
 
     def testPeriodic(self):
@@ -145,7 +142,7 @@ class MyRobot(MagicRobot):
         Called during test mode alot
         """
         print(str(self.navx.getFusedHeading()))
-        
+
         self.xboxMap.controllerInput()
 
         if self.xboxMap.getDriveLeft() > 0:
