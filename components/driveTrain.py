@@ -22,8 +22,6 @@ class DriveTrain():
     gyros_system: dict
     gearRatio = 10
     wheelCircumference = 6 * math.pi
-    prevDistTraveledLeft = 0
-    prevDistTraveledRight = 0
 
     def setup(self):
         self.tankLeftSpeed = 0
@@ -72,33 +70,38 @@ class DriveTrain():
         self.driveMotorsMultiplier = self.prevMultiplier
         self.creeperMode = False
 
-    def stop(self, coast=False):
+    def stop(self):
         self.controlMode = ControlMode.kDisabled
 
     def getMeasuredSpeed(self):
         pass
 
     def getRightSideDistTraveled(self):
-        self.distInch = (self.rightMotor.getPosition(0, positionUnits.kRotations) / self.gearRatio) * self.wheelCircumference - self.prevDistTraveledRight
-        return self.distInch# / 12
+        """
+        Returns the right motor's distance traveled in inches
+        """
+        self.rightDistInch = (self.rightMotor.getPosition(0, positionUnits.kRotations) / self.gearRatio) * self.wheelCircumference
+        return self.rightDistInch# / 12
 
     def getLeftSideDistTraveled(self):
-        self.distInch = (self.leftMotor.getPosition(0, positionUnits.kRotations) / self.gearRatio) * self.wheelCircumference - self.prevDistTraveledLeft
-        return self.distInch# / 12
+        """
+        Returns the left motor's distance traveled in inches
+        """
+        self.leftDistInch = (self.leftMotor.getPosition(0, positionUnits.kRotations) / self.gearRatio) * self.wheelCircumference
+        return self.leftDistInch# / 12
 
     def getEstTotalDistTraveled(self):
         return (self.getLeftSideDistTraveled() + self.getRightSideDistTraveled()) / 2
 
     def resetDistTraveled(self):
-        self.prevDistTraveledLeft = self.getLeftSideDistTraveled() + self.prevDistTraveledLeft
-        self.prevDistTraveledRight = self.getRightSideDistTraveled() + self.prevDistTraveledRight
-
+        self.leftMotor.resetPosition()
+        self.rightMotor.resetPosition()
 
     def resetLeftDistTraveled(self):
-        self.prevDistTraveledLeft = self.getLeftSideDistTraveled()
+        self.leftMotor.resetPosition()
 
     def resetRightDistTraveled(self):
-        self.prevDistTraveledLeft = self.getRightSideDistTraveled()
+        self.rightMotor.resetPosition()
 
     def execute(self):
         if self.controlMode == ControlMode.kTankDrive:

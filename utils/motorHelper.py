@@ -230,6 +230,9 @@ class WPI_TalonFXFeedback(ctre.WPI_TalonFX):
 
         self.sensorCollection = self.getSensorCollection()
 
+    def resetPosition(self):
+        self.sensorCollection.setIntegratedSensorPosition(0)
+
     def getPosition(self, pidId, units: positionUnits):
         """
         pidId: The ID of the pid config
