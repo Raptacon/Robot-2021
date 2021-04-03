@@ -22,7 +22,6 @@ class GoToDist(StateMachine):
         self.starting = True
 
     def stop(self):
-        log.error("Stopping")
         self.running = False
         self.driveTrain.setArcade(0, 0)
         self.next_state("idling")
@@ -31,7 +30,6 @@ class GoToDist(StateMachine):
     def idling(self):
         self.initDist = 0
         if self.starting and not self.running:
-            log.error("Starting")
             if self.targetDist != 0:
                 self.next_state("recordInitDist")
             else:
@@ -56,9 +54,7 @@ class GoToDist(StateMachine):
         self.nextSpeed = 0
         totalOffset = self.targetDist - self.dist
         for i, limit in enumerate(self.dumbSpeedLimits):
-            log.error("limit: "+str(limit)+" ABS: "+str(abs(totalOffset)))
             if abs(totalOffset) > limit:
-                log.error("DUMB CHANGED")
                 self.dumbSpeed = self.dumbSpeeds[i]
                 break
 
