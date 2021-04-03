@@ -1,6 +1,9 @@
-import wpilib.drive
+from utils.UnitEnums import positionUnits
 from enum import Enum, auto
+import math
+import wpilib.drive
 import logging as log
+from networktables import NetworkTables
 
 from magicbot import tunable
 class ControlMode(Enum):
@@ -19,6 +22,14 @@ class DriveTrain():
     driveMotorsMultiplier = tunable(.5)
     creeperMotorsMultiplier = tunable(.25)
     gyros_system: dict
+    gearRatio = 10
+    wheelCircumference = 6 * math.pi
+
+    smartDashTable = NetworkTables.getTable("SmartDashboard")
+
+    # Encoder variables
+    leftSideSensorInverted = True
+    rightSideSensorInverted = False
 
     def setup(self):
         self.tankLeftSpeed = 0
@@ -67,11 +78,45 @@ class DriveTrain():
         self.driveMotorsMultiplier = self.prevMultiplier
         self.creeperMode = False
 
-    def stop(self, coast=False):
+    def stop(self):
         self.controlMode = ControlMode.kDisabled
 
     def getMeasuredSpeed(self):
         pass
+
+    def getRightSideDistTraveled(self):
+        """
+        Returns the right motor's distance traveled in inches
+        """
+        self.rightDistInch = (self.rightMotor.getPosition(0, positionUnits.kRotations) / self.gearRatio) * self.wheelCircumference
+        if self.rightSideSensorInverted:
+            return -1 * self.rightDistInch# / 12
+        else:
+            return self.rightDistInch
+
+    def getLeftSideDistTraveled(self):
+        """
+        Returns the left motor's distance traveled in inches
+        """
+        self.leftDistInch = (self.leftMotor.getPosition(0, positionUnits.kRotations) / self.gearRatio) * self.wheelCircumference
+        if self.leftSideSensorInverted:
+            return -1 * self.leftDistInch# / 12
+        else:
+            return self.leftDistInch
+
+    def getEstTotalDistTraveled(self):
+        self.smartDashTable.putNumber("Estimated Encoder Distance since enable", (self.getLeftSideDistTraveled() + self.getRightSideDistTraveled()) / 2)
+        return (self.getLeftSideDistTraveled() + self.getRightSideDistTraveled()) / 2
+
+    def resetDistTraveled(self):
+        self.leftMotor.resetPosition()
+        self.rightMotor.resetPosition()
+
+    def resetLeftDistTraveled(self):
+        self.leftMotor.resetPosition()
+
+    def resetRightDistTraveled(self):
+        self.rightMotor.resetPosition()
 
     def execute(self):
         if self.controlMode == ControlMode.kTankDrive:
