@@ -20,6 +20,7 @@ from components.scorpionLoader import ScorpionLoader
 from components.feederMap import FeederMap
 from components.navx import Navx
 from components.turnToAngle import TurnToAngle
+from autonomous.pathSelector import PathSelector
 
 # Other imports:
 from robotMap import RobotMap, XboxMap
@@ -81,6 +82,7 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, ScorpionLoader)
         testComponentCompatibility(self, TestBoard)
         testComponentCompatibility(self, FeederMap)
+        testComponentCompatibility(self, PathSelector)
 
 
     def autonomousInit(self):

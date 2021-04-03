@@ -71,18 +71,6 @@ class TurnToAngle():
                 self.nextOutput = self.PIDController.calculate(measurement = self.heading, setpoint = self.nextHeading)
                 self.driveTrain.setTank(-1 * self.nextOutput, self.nextOutput)
 
-    @feedback
-    def outputDisplay(self):
-        return self.nextOutput
-
-    @feedback
-    def nextHeadingDisplay(self):
-        return self.nextHeading
-
-    @feedback
-    def setSpeedDisplay(self):
-        return self.setSpeed
-    
     def stop(self):
         self.nextOutput = 0
         self.PIDController.reset()
@@ -93,7 +81,6 @@ class TurnToAngle():
         self.isRunning = False
         self.initialHeading = self.heading
         self.setSpeed = True
-
 
     def execute(self):
         self.output()
