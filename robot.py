@@ -128,9 +128,6 @@ class MyRobot(MagicRobot):
 
         self.MXPserial.flush()
         self.driveTrain.resetDistTraveled()
-
-        self.goToDist.setTargetDist(120)
-
         self.shooter.autonomousDisabled()
 
     def teleopPeriodic(self):
@@ -196,7 +193,7 @@ class MyRobot(MagicRobot):
             setattr(self, containerName, {})
             self.subsystemGyros = {}
 
-        # note this is a dicontary reference, so changes to it
+        # note this is a dictionary reference, so changes to it
         # are changes to self.<containerName>
         container = getattr(self, containerName)
 
