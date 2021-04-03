@@ -19,12 +19,10 @@ from components.loaderLogic import LoaderLogic
 from components.elevator import Elevator
 from components.scorpionLoader import ScorpionLoader
 from components.feederMap import FeederMap
-from components.autoAlign import AutoAlign
-from components.autoShoot import AutoShoot
+from components.lidar import Lidar
 
 # Other imports:
 from robotMap import RobotMap, XboxMap
-from components.lidar import Lidar
 from networktables import NetworkTables
 from utils.componentUtils import testComponentCompatibility
 from utils.motorHelper import createMotor
