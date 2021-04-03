@@ -49,8 +49,6 @@ class MyRobot(MagicRobot):
     pneumatics: Pneumatics
     elevator: Elevator
     scorpionLoader: ScorpionLoader
-    autoAlign: AutoAlign
-    autoShoot: AutoShoot
     lidar: Lidar
 
     # Test code:
@@ -93,8 +91,6 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, Pneumatics)
         testComponentCompatibility(self, Elevator)
         testComponentCompatibility(self, ScorpionLoader)
-        testComponentCompatibility(self, AutoAlign)
-        testComponentCompatibility(self, AutoShoot)
         testComponentCompatibility(self, FeederMap)
         testComponentCompatibility(self, TestBoard)
         testComponentCompatibility(self, Lidar)
@@ -123,7 +119,6 @@ class MyRobot(MagicRobot):
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnPress, self.loader.stopLoading)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnRelease, self.shooter.doneShooting)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnRelease, self.loader.determineNextAction)
-        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnRelease, self.autoShoot.stop)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
 
         self.shooter.autonomousDisabled()
@@ -143,21 +138,7 @@ class MyRobot(MagicRobot):
         driveLeft = utils.math.expScale(self.xboxMap.getDriveLeft(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
         driveRight = utils.math.expScale(self.xboxMap.getDriveRight(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
 
-        self.autoShoot.engage()
-        if self.xboxMap.getDriveA() == True:
-            executingDriveCommand = True
-            self.autoAlign.setShootAfterComplete(True)
-            self.autoAlign.engage()
-        elif self.xboxMap.getDriveA() == False and self.prevAState == True:
-            self.autoAlign.stop()
-            self.autoShoot.stop()
-            self.shooterMotors.stopShooter()
-            self.shooterMotors.stopLoader()
-        self.prevAState = self.xboxMap.getDriveA()
-
-        if not executingDriveCommand:
-            self.autoAlign.reset_integral()
-            self.driveTrain.setTank(driveLeft, driveRight)
+ 
 
         self.scorpionLoader.checkController()
 
