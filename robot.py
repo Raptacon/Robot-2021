@@ -123,17 +123,11 @@ class MyRobot(MagicRobot):
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.driveTrain.enableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperRight, ButtonEvent.kOnPress, self.navx.reset)
-<<<<<<< HEAD
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.goToDist.start)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.goToDist.stop)
-=======
->>>>>>> 2a5ac6e90978a92ac42a9b4e62a19985ae161606
 
         self.driveTrain.resetDistTraveled()
-<<<<<<< HEAD
-=======
 
->>>>>>> 2a5ac6e90978a92ac42a9b4e62a19985ae161606
         self.shooter.autonomousDisabled()
 
     def teleopPeriodic(self):
@@ -154,16 +148,9 @@ class MyRobot(MagicRobot):
         else:
             self.turnToAngle.stop()
 
-<<<<<<< HEAD
-        if self.goToDist.running:
-            driveComponent = True
-
         if driveComponent == False:
             self.driveTrain.setTank(driveLeft, driveRight)
 
-        self.smartDashboardTable.putNumber("encoderDist", self.driveTrain.getEstTotalDistTraveled())
-=======
->>>>>>> 2a5ac6e90978a92ac42a9b4e62a19985ae161606
 
         if self.xboxMap.getMechDPad() == 0:
             self.winch.setRaise()
