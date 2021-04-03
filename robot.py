@@ -16,10 +16,13 @@ from components.winch import Winch
 from components.shooterMotors import ShooterMotorCreation
 from components.shooterLogic import ShooterLogic
 from components.loaderLogic import LoaderLogic
+from components.lidar import Lidar
 from components.elevator import Elevator
 from components.scorpionLoader import ScorpionLoader
 from components.feederMap import FeederMap
-from components.lidar import Lidar
+from components.navx import Navx
+from components.turnToAngle import TurnToAngle
+from components.driveTrainGoToDist import GoToDist
 
 # Other imports:
 from robotMap import RobotMap, XboxMap
@@ -49,23 +52,26 @@ class MyRobot(MagicRobot):
     pneumatics: Pneumatics
     elevator: Elevator
     scorpionLoader: ScorpionLoader
+    navx: Navx
+    turnToAngle: TurnToAngle
     lidar: Lidar
+    goToDist: GoToDist
 
     # Test code:
     testBoard: TestBoard
 
     sensitivityExponent = tunable(1.8)
+    arcadeMode = tunable(False)
 
     def createObjects(self):
         """
         Robot-wide initialization code should go here. Replaces robotInit
         """
+
         self.map = RobotMap()
         self.xboxMap = XboxMap(XboxController(1), XboxController(0))
 
         ReadBufferValue = 18
-        self.map = RobotMap()
-        self.xboxMap = XboxMap(XboxController(1), XboxController(0))
 
         self.MXPserial = SerialPort(115200, SerialPort.Port.kMXP, 8,
         SerialPort.Parity.kParity_None, SerialPort.StopBits.kStopBits_One)
@@ -95,12 +101,14 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, TestBoard)
         testComponentCompatibility(self, Lidar)
         testComponentCompatibility(self, LoaderLogic)
+        testComponentCompatibility(self, GoToDist)
 
 
     def autonomousInit(self):
         """Run when autonomous is enabled."""
         self.shooter.autonomousEnabled()
         self.loader.stopLoading()
+
 
     def teleopInit(self):
         # Register button events for doof
@@ -120,6 +128,11 @@ class MyRobot(MagicRobot):
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnRelease, self.shooter.doneShooting)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnRelease, self.loader.determineNextAction)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
+        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperRight, ButtonEvent.kOnPress, self.navx.reset)
+        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.goToDist.start)
+        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.goToDist.stop)
+
+        self.driveTrain.resetDistTraveled()
 
         self.shooter.autonomousDisabled()
         self.prevAState = False
@@ -130,22 +143,35 @@ class MyRobot(MagicRobot):
         """
         self.xboxMap.controllerInput()
 
-        #This variable determines whether to use controller input for the drivetrain or not.
-        #If we are using a command (such as auto align) that uses the drivetrain, we don't want to use the controller's input because it would overwrite
-        #what the component is doing.
-        executingDriveCommand = False
+        driveLeftY = utils.math.expScale(self.xboxMap.getDriveLeft(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
+        driveRightY = utils.math.expScale(self.xboxMap.getDriveRight(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
+        # unused for now # driveLeftX = utils.math.expScale(self.xboxMap.getDriveLeftHoriz(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
+        driveRightX = utils.math.expScale(self.xboxMap.getDriveRightHoriz(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
 
-        driveLeft = utils.math.expScale(self.xboxMap.getDriveLeft(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
-        driveRight = utils.math.expScale(self.xboxMap.getDriveRight(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
+        self.goToDist.engage()
+        driveComponent = False
 
- 
+        if self.xboxMap.getDriveX() == True:
+            driveComponent = True
+            self.turnToAngle.setIsRunning()
+        else:
+            self.turnToAngle.stop()
+
+        if not driveComponent:
+            if self.arcadeMode:
+                self.driveTrain.setArcade(driveLeftY, -1 * driveRightX)
+            else:
+                self.driveTrain.setTank(driveLeftY, driveRightY)
 
         self.scorpionLoader.checkController()
+
+
 
     def testInit(self):
         """
         Function called when testInit is called.
         """
+
         print("testInit was Successful")
 
     def testPeriodic(self):
@@ -166,7 +192,7 @@ class MyRobot(MagicRobot):
             setattr(self, containerName, {})
             self.subsystemGyros = {}
 
-        # note this is a dicontary refernce, so changes to it
+        # note this is a dictionary reference, so changes to it
         # are changes to self.<containerName>
         container = getattr(self, containerName)
 
