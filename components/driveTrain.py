@@ -1,4 +1,4 @@
-from utils.Myenum import velocityUnits, positionUnits
+from utils.Myenum import positionUnits
 from enum import Enum, auto
 import math
 import wpilib.drive

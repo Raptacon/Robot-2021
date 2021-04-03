@@ -24,7 +24,6 @@ from components.navx import Navx
 from components.turnToAngle import TurnToAngle
 
 # Other imports:
-import logging as log
 from robotMap import RobotMap, XboxMap
 from networktables import NetworkTables
 from utils.componentUtils import testComponentCompatibility
