@@ -245,6 +245,10 @@ class WPI_TalonFXFeedback(ctre.WPI_TalonFX):
             self.position = self.sensorCollection.getIntegratedSensorPosition()
         elif units == positionUnits.kRotations:
             self.position = self.sensorCollection.getIntegratedSensorPosition() / 2048
+        else:
+            log.error("Unrecognized units: "+str(units))
+            return "Unrecognized unit"
+
         return self.position
 
     def getVelocity(self, pidId, units: velocityUnits):
@@ -263,6 +267,7 @@ class WPI_TalonFXFeedback(ctre.WPI_TalonFX):
         elif units == velocityUnits.kRPM:
             self.velocity = (self.sensorCollection.getIntegratedSensorVelocity() / 2048) / 600
         else:
+            log.error("Unrecognized units: "+str(units))
             return "Unrecognized unit"
 
         return self.velocity

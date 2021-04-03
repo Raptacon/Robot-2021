@@ -142,8 +142,7 @@ class MyRobot(MagicRobot):
             self.driveTrain.setTank(driveLeft, driveRight)
             self.turnToAngle.stop()
 
-        self.smartDashboardTable.putNumber("lidarDist", self.lidar.getDist())
-        log.info("Encoder dist "+str(self.driveTrain.getEstTotalDistTraveled()))
+        self.smartDashboardTable.putNumber("encoderDist", self.driveTrain.getEstTotalDistTraveled())
 
         if self.xboxMap.getMechDPad() == 0:
             self.winch.setRaise()
@@ -182,7 +181,7 @@ class MyRobot(MagicRobot):
             setattr(self, containerName, {})
             self.subsystemGyros = {}
 
-        # note this is a dicontary refernce, so changes to it
+        # note this is a dicontary reference, so changes to it
         # are changes to self.<containerName>
         container = getattr(self, containerName)
 

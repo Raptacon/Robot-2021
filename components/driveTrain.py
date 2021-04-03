@@ -23,6 +23,10 @@ class DriveTrain():
     gearRatio = 10
     wheelCircumference = 6 * math.pi
 
+    # Encoder variables
+    leftSideSensorInverted = True
+    rightSideSensorInverted = False
+
     def setup(self):
         self.tankLeftSpeed = 0
         self.tankRightSpeed = 0
@@ -81,14 +85,20 @@ class DriveTrain():
         Returns the right motor's distance traveled in inches
         """
         self.rightDistInch = (self.rightMotor.getPosition(0, positionUnits.kRotations) / self.gearRatio) * self.wheelCircumference
-        return self.rightDistInch# / 12
+        if self.rightSideSensorInverted:
+            return -1 * self.rightDistInch# / 12
+        else:
+            return self.rightDistInch
 
     def getLeftSideDistTraveled(self):
         """
         Returns the left motor's distance traveled in inches
         """
         self.leftDistInch = (self.leftMotor.getPosition(0, positionUnits.kRotations) / self.gearRatio) * self.wheelCircumference
-        return self.leftDistInch# / 12
+        if self.leftSideSensorInverted:
+            return -1 * self.leftDistInch# / 12
+        else:
+            return self.leftDistInch
 
     def getEstTotalDistTraveled(self):
         return (self.getLeftSideDistTraveled() + self.getRightSideDistTraveled()) / 2
