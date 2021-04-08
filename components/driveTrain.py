@@ -18,7 +18,6 @@ class ControlMode(Enum):
 
 class DriveTrain():
     compatString = ["doof","scorpion"]
-    # Note - The way we will want to do this will be to give this component motor description dictionaries from robotmap and then creating the motors with motorhelper. After that, we simply call wpilib' differential drive
     motors_driveTrain: dict
     driveMotorsMultiplier = tunable(.5)
     creeperMotorsMultiplier = tunable(.25)
@@ -33,10 +32,8 @@ class DriveTrain():
     rightSideSensorInverted = False
 
     def setup(self):
-        self.tankLeftSpeed = 0
-        self.tankRightSpeed = 0
-        self.arcadeSpeed = 0
-        self.arcadeRotation = 0
+        self.input1 = 0
+        self.input2 = 0
         self.creeperMode = False
         self.controlMode = ControlMode.kDisabled
         self.leftMotor = self.motors_driveTrain["leftMotor"]
@@ -65,15 +62,27 @@ class DriveTrain():
     def isStopping(self):
         pass
 
-    def setTank(self, leftSpeed, rightSpeed):
+    def __setTank__(self, leftSpeed, rightSpeed):
+        """
+        Should only be called by driveTrainHandler.
+        Sets the next output of the driveTrain so
+        that the left side is set to leftSpeed and
+        the right side is set to rightSpeed.
+        """
         self.controlMode = ControlMode.kTankDrive
-        self.tankLeftSpeed = leftSpeed
-        self.tankRightSpeed = rightSpeed
+        self.input1 = leftSpeed
+        self.input2 = rightSpeed
 
-    def setArcade(self, speed, rotation):
+    def __setArcade__(self, speed, rotation):
+        """
+        Should only be called by driveTrainHandler.
+        Sets the next output of the driveTrain so that
+        the robot will travel forward or backward  based
+        on speed and will turn based on rotation.
+        """
         self.controlMode = ControlMode.kArcadeDrive
-        self.arcadeSpeed = speed
-        self.arcadeRotation = rotation
+        self.input1 = speed
+        self.input2 = rotation
 
     def enableCreeperMode(self):
         """when left bumper is pressed, it sets the driveMotorsMultiplier to .25"""
@@ -130,9 +139,27 @@ class DriveTrain():
     def resetRightDistTraveled(self):
         self.rightMotor.resetPosition()
 
+    def __setControlMode__(self, controlMode:ControlMode):
+        """
+        Sets the control mode based off of
+        the ControlMode enum.
+        """
+        self.controlMode = controlMode
+
+    def __genericSet__(self, input1:float, input2:float):
+        """
+        Sets both input 1 and input 2.
+        In tank mode, input 1 is the left speed and
+        input 2 is the right speed. In arcade mode,
+        input 1 is the forward/backward speed and
+        input 2 is the rotation.
+        """
+        self.input1 = input1
+        self.input2 = input2
+
     def execute(self):
         if self.controlMode == ControlMode.kTankDrive:
-            self.driveTrain.tankDrive(self.tankLeftSpeed, self.tankRightSpeed, False)
+            self.driveTrain.tankDrive(self.input1, self.input2, False)
 
         elif self.controlMode == ControlMode.kArcadeDrive:
-            self.driveTrain.arcadeDrive(self.arcadeSpeed, self.arcadeRotation, False)
+            self.driveTrain.arcadeDrive(self.input1, self.input2, False)
