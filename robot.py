@@ -8,7 +8,8 @@ from wpilib import SerialPort
 from magicbot import MagicRobot, tunable
 
 # Component imports:
-from components.driveTrain import DriveTrain
+from components.driveTrain import DriveTrain, ControlMode
+from components.driveTrainHandler import DriveTrainHandler
 from components.pneumatics import Pneumatics
 from components.buttonManager import ButtonManager, ButtonEvent
 from components.breakSensors import Sensors
@@ -25,6 +26,7 @@ from components.turnToAngle import TurnToAngle
 from components.driveTrainGoToDist import GoToDist
 
 # Other imports:
+import logging as log
 from robotMap import RobotMap, XboxMap
 from networktables import NetworkTables
 from utils.componentUtils import testComponentCompatibility
@@ -47,6 +49,7 @@ class MyRobot(MagicRobot):
     sensors: Sensors
     shooterMotors: ShooterMotorCreation
     driveTrain: DriveTrain
+    driveTrainHandler: DriveTrainHandler
     winch: Winch
     buttonManager: ButtonManager
     pneumatics: Pneumatics
@@ -91,6 +94,7 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, ShooterLogic)
         testComponentCompatibility(self, ShooterMotorCreation)
         testComponentCompatibility(self, DriveTrain)
+        testComponentCompatibility(self, DriveTrainHandler)
         testComponentCompatibility(self, Winch)
         testComponentCompatibility(self, ButtonManager)
         testComponentCompatibility(self, Pneumatics)
@@ -131,6 +135,8 @@ class MyRobot(MagicRobot):
         self.driveTrain.setBraking(True)
         self.driveTrain.resetDistTraveled()
 
+        self.smartDashboardTable.setDefaultString("Control Mode", "Tank")
+
         self.shooter.autonomousDisabled()
 
     def teleopPeriodic(self):
@@ -153,15 +159,42 @@ class MyRobot(MagicRobot):
         else:
             self.turnToAngle.stop()
 
-        if not driveComponent:
-            if self.arcadeMode:
-                self.driveTrain.setArcade(driveLeftY, -1 * driveRightX)
-            else:
-                self.driveTrain.setTank(driveLeftY, driveRightY)
+        self.checkControlMode()
+
+        if self.controlMode == ControlMode.kArcadeDrive:
+            self.driveTrainHandler.setDriveTrain("Controllers", self.controlMode, driveLeftY, -1 * driveRightX)
+        elif self.controlMode == ControlMode.kTankDrive:
+            self.driveTrainHandler.setDriveTrain("Controllers", self.controlMode, driveLeftY, driveRightY)
+        else:
+            # This is meant to act as a way to disable the robot if "Disabled" is passed to the controlMode
+            # or if any other control mode is used that we don't know yet.
+            log.info("Using control mode "+str(self.controlMode)+", you should switch to arcade or tank")
+            self.driveTrainHandler.setDriveTrain("Controllers", self.controlMode, 0, 0)
+
 
         self.scorpionLoader.checkController()
 
+    def checkControlMode(self):
+        """
+        Retrieves the "Control Mode" from smartDashboard
+        and returns a controlMode based on that.
+        """
 
+        # Make the string lowercase to make control mode case insensitive
+        self.controlStr = self.smartDashboardTable.getString("Control Mode", "Disabled").lower()
+
+        if self.controlStr == "arcade" or self.controlStr == "arcade drive":
+            self.controlMode = ControlMode.kArcadeDrive
+
+        elif self.controlStr == "tank" or self.controlStr == "tank drive":
+            self.controlMode = ControlMode.kTankDrive
+
+        elif self.controlStr == "disabled":
+            self.controlMode = ControlMode.kDisabled
+        else:
+            self.controlMode = ControlMode.kDisabled
+            log.error("Unrecognized control mode "+str(self.controlStr))
+        return self.controlMode
 
     def testInit(self):
         """
@@ -212,7 +245,7 @@ class MyRobot(MagicRobot):
         NEVER RUN ANYTHING THAT MOVES ANYTHING HERE
         """
         self.driveTrain.setBraking(False)
-    
+
     def disabledPeriodic(self):
         """
         Runs repeatedly while disabled

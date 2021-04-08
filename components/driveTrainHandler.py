@@ -9,18 +9,21 @@ class DriveTrainHandler():
     driveTrain: DriveTrain
 
     def on_enable(self):
-        pass:
+        self.controlMode = ControlMode.kDisabled
+        self.input1 = 0
+        self.input2 = 0
 
     def setDriveTrain(self, ID:str, controlMode:ControlMode, input1:float, input2:float):
         """
         Sets the drive train using controlMode and
-        inputs if the handler decides the call is worthy.
+        inputs IF the handler decides the call is worthy.
         """
         if self.checkWorthiness(ID):
-            self.driveTrain.__setControlMode__(controlMode)
-            self.driveTrain.__genericSet__(input1, input2)
+            self.controlMode = controlMode
+            self.input1 = input1
+            self.input2 = input2
         else:
-            log.info(ID + " called setDriveTrain() but was not worthy.")
+            log.info(ID + " called setDriveTrain() but was not deemed worthy.")
 
     def checkWorthiness(self, ID:str):
         """
@@ -31,3 +34,7 @@ class DriveTrainHandler():
         Right now everything is worthy.
         """
         return True
+
+    def execute(self):
+        self.driveTrain.__setControlMode__(self.controlMode)
+        self.driveTrain.__genericSet__(self.input1, self.input2)
