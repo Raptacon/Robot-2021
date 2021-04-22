@@ -26,6 +26,9 @@ class GoToDist(StateMachine):
         self.driveTrain.setArcade(0, 0)
         self.next_state("idling")
 
+    def getRunning(self):
+        return self.running
+
     @state(first=True)
     def idling(self):
         self.initDist = 0
