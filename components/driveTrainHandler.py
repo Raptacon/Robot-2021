@@ -10,6 +10,7 @@ class DriveTrainHandler():
 
     def on_enable(self):
         self.controlMode = ControlMode.kDisabled
+        self.currentID = "None"
         self.input1 = 0
         self.input2 = 0
 
@@ -18,7 +19,12 @@ class DriveTrainHandler():
         Sets the drive train using controlMode and
         inputs IF the handler decides the call is worthy.
         """
+
+        self.input1 = 0
+        self.input2 = 0
+
         if self.checkWorthiness(ID):
+            self.currentID = ID
             self.controlMode = controlMode
             self.input1 = input1
             self.input2 = input2
@@ -31,10 +37,21 @@ class DriveTrainHandler():
         This (should be) determined based off of whether
         the joysticks have input as well as if autonomous
         code is running.
-        Right now everything is worthy.
+        Right now our policies are rudimentary.
         """
-        return True
+
+        # Always accept joystick input
+        # In order to prevent joystick from overriding everything,
+        # joystick input should not be called while people aren't pressing
+        # the joysticks. (Don't call when the joysticks are within a deadzone)
+        if ID == "Joystick":
+            return True
+        elif "Component" in ID and self.currentID != "Joystick":
+            return True
+        else:
+            return False
 
     def execute(self):
         self.driveTrain.__setControlMode__(self.controlMode)
         self.driveTrain.__genericSet__(self.input1, self.input2)
+        self.currentID = "None"
