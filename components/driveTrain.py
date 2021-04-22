@@ -64,7 +64,9 @@ class DriveTrain():
 
     def __setTank__(self, leftSpeed, rightSpeed):
         """
-        Should only be called by driveTrainHandler.
+        !!
+        SHOULD ONLY BE CALLED BY DRIVETRAINHANDLER
+        !!
         Sets the next output of the driveTrain so
         that the left side is set to leftSpeed and
         the right side is set to rightSpeed.
@@ -75,7 +77,9 @@ class DriveTrain():
 
     def __setArcade__(self, speed, rotation):
         """
-        Should only be called by driveTrainHandler.
+        !!
+        SHOULD ONLY BE CALLED BY DRIVETRAINHANDLER
+        !!
         Sets the next output of the driveTrain so that
         the robot will travel forward or backward  based
         on speed and will turn based on rotation.
@@ -141,6 +145,9 @@ class DriveTrain():
 
     def __setControlMode__(self, controlMode:ControlMode):
         """
+        !!
+        SHOULD ONLY BE CALLED BY DRIVETRAINHANDLER
+        !!
         Sets the control mode based off of
         the ControlMode enum.
         """
@@ -148,6 +155,9 @@ class DriveTrain():
 
     def __genericSet__(self, input1:float, input2:float):
         """
+        !!
+        SHOULD ONLY BE CALLED BY DRIVETRAINHANDLER
+        !!
         Sets both input 1 and input 2.
         In tank mode, input 1 is the left speed and
         input 2 is the right speed. In arcade mode,
