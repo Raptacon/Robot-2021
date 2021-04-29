@@ -23,6 +23,10 @@ class Vector():
     def getDist(self):
         return self.dist
 
+class Action():
+    def init(self, type:str):
+        self.type = type
+
 class PathFollower(AutonomousStateMachine):
     MODE_NAME = "Path Follower"
     navx = navx._navx.AHRS.create_spi()
@@ -31,3 +35,23 @@ class PathFollower(AutonomousStateMachine):
     loader: LoaderLogic
     turnToAngle: TurnToAngle
     goToDist: GoToDist
+    actionList = []# parseConfig()
+    actionIndex = 0
+
+    @state
+    def decideAction(self):
+        self.nextAction = self.actionList[self.actionIndex]
+        if self.nextAction is Action:
+            if "dist" in self.nextAction.type.lower():
+                self.next_state('goToDist')
+            elif "angle" in self.nextAction.type.lower():
+                self.next_state('turnToAngle')
+            elif "func" in self.nextAction.type.lower():
+                self.next_state('execActionFunc')
+            else:
+                log.error("Unrecognized type '" + str(self.nextAction.type) + "'")
+                self.next_state('idling')
+
+        else:
+            log.error("Unrecognized type '" + str(type(self.nextAction)) + "'")
+            self.next_state('idling')
