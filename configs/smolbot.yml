@@ -11,6 +11,7 @@ driveTrain:
       inverted: False
     rightFollower:
       channel: 31
+      masterChannel: 30
       type: "CANTalonFXFollower"
       inverted: False
     leftMotor:
@@ -19,5 +20,6 @@ driveTrain:
       inverted: False
     leftFollower:
       channel: 21
+      masterChannel: 20
       type: "CANTalonFXFollower"
       inverted: False

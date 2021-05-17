@@ -204,7 +204,7 @@ class MyRobot(MagicRobot):
             self.logger.info("Creating %s", groupName_subsystem)
             setattr(self, groupName_subsystem, container[subsystem])
 
-        self.logger.info(f"Created {createdCount} items for {groupName} groups with `{factory.__name__}` into `{containerName}")
+        self.logger.info(f"Created {createdCount} items for {groupName} groups with `{factory.__name__}` into `{containerName}`")
 
     def disabledInit(self):
         """
@@ -212,7 +212,7 @@ class MyRobot(MagicRobot):
         NEVER RUN ANYTHING THAT MOVES ANYTHING HERE
         """
         self.driveTrain.setBraking(False)
-    
+
     def disabledPeriodic(self):
         """
         Runs repeatedly while disabled
