@@ -5,6 +5,7 @@ import wpilib
 from enum import Flag, auto
 import inspect
 import traceback
+import logging as log
 
 class ButtonEvent(Flag):
     """
@@ -28,9 +29,10 @@ class ButtonManager(object):
         """
         #update to change logging level
         #self.logger.setLevel(logging.DEBUG)
-        
+
         self.entrys = {}
         self.enabledTypes = {}
+        log.info("Button Manager setup complete")
 
     def registerButtonEvent(self, hidDevice: wpilib.interfaces.GenericHID, buttonId: int, eventTypes: ButtonEvent, callback : callable):
         """
@@ -42,7 +44,7 @@ class ButtonManager(object):
         #assert buttonId > 0 and buttonId < 16, f"Invalid button ID {str(buttonId)}"
         assert isinstance(eventTypes, ButtonEvent), f"{eventTypes} is not an eventTypes"
         assert callable(callback), f"{str(callback)} must be callable"
-        
+
         entry = self.__createCallbackEntry(hidDevice, buttonId, eventTypes, callback)
         self.logger.info(f"Registering event [{self.__entryStr(entry)}]")
 
@@ -73,7 +75,7 @@ class ButtonManager(object):
         if buttonId not in self.entrys[hidDevice]:
             self.entrys[hidDevice][buttonId] = []
             self.enabledTypes[hidDevice][buttonId] = ButtonEvent.kNone
-        
+
 
         entry = {}
         entry["hidDevice"] = hidDevice
@@ -105,7 +107,7 @@ class ButtonManager(object):
             if not (action & entry["eventTypes"]):
                 #if not enabled for this action, do not process
                 continue
-            
+
             #track metrics
             if not action in entry["triggerCount"]:
                 entry["triggerCount"][action] = 0
@@ -152,7 +154,7 @@ class ButtonManager(object):
         if wasButtonReleased:
             self.logger.debug("__runOnReleased: %s:%s", hidDevice.getName, str(button))
             self.__processEvent(entrys, ButtonEvent.kOnRelease)
-        
+
     def __runWhilePressed(self, hidDevice: wpilib.interfaces.GenericHID, button, enabledActions, entrys):
         """
         Private Processes event type
@@ -183,7 +185,7 @@ class ButtonManager(object):
                 entrys = self.entrys[hidDevice][button]
 
                 enabledActions = self.enabledTypes[hidDevice][button]
-                
+
                 #check each event type
                 self.__runOnPressed(hidDevice, button, enabledActions, entrys)
                 self.__runOnReleased(hidDevice, button, enabledActions, entrys)
