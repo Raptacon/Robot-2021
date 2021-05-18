@@ -5,6 +5,9 @@ import ctre
 import logging as log
 from .UnitEnums import positionUnits, velocityUnits
 
+class NoCurrentLimits(Exception):
+    pass
+
 def createMotor(motorDescp, motors = {}):
     '''This is where all motors are set up.
     Motors include CAN Talons, CAN Talon Followers, CAN Talon FX, CAN Talon FX Followers, and SparkMax and its follower.
@@ -88,6 +91,8 @@ def setTalonFXCurrentLimits(motor, motorDescp):
         supplyCurrentConfig = ctre.SupplyCurrentLimitConfiguration(True, currentLimit, triggerThresholdCurrent, triggerThresholdTime)
         motor.configStatorCurrentLimit(statorCurrentConfig)
         motor.configSupplyCurrentLimit(supplyCurrentConfig)
+    else:
+        raise NoCurrentLimits("Talon FXs must have current limits in config")
 
 def setTalonSRXCurrentLimits(motor, motorDescp):
     """
