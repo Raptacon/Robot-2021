@@ -10,6 +10,15 @@ driveTrain:
       channel: 30
       type: "CANTalonFX"
       inverted: False
+      pid:
+        kP: 0.001
+        kI: 0
+        kD: 0
+        kF: 0
+        controlType: "PercentOutput"
+        sensorPhase: True
+        kPreScale: 2
+        feedbackDevice: "IntegratedSensor"
       currentLimits:
         triggerThresholdCurrent: 60
         triggerThresholdTime: 50
@@ -29,6 +38,15 @@ driveTrain:
       channel: 20
       type: "CANTalonFX"
       inverted: False
+      pid:
+        kP: 0.001
+        kI: 0
+        kD: 0
+        kF: 0
+        controlType: "PercentOutput"
+        sensorPhase: True
+        kPreScale: 2
+        feedbackDevice: "IntegratedSensor"
       currentLimits:
         triggerThresholdCurrent: 60
         triggerThresholdTime: 50

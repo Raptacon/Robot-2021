@@ -22,7 +22,6 @@ from components.scorpionLoader import ScorpionLoader
 from components.feederMap import FeederMap
 from components.navx import Navx
 from components.turnToAngle import TurnToAngle
-from components.driveTrainGoToDist import GoToDist
 
 # Other imports:
 from robotMap import RobotMap, XboxMap
@@ -55,7 +54,6 @@ class MyRobot(MagicRobot):
     navx: Navx
     turnToAngle: TurnToAngle
     lidar: Lidar
-    goToDist: GoToDist
 
     # Test code:
     testBoard: TestBoard
@@ -100,7 +98,6 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, FeederMap)
         testComponentCompatibility(self, Lidar)
         testComponentCompatibility(self, LoaderLogic)
-        testComponentCompatibility(self, GoToDist)
 
 
     def autonomousInit(self):
@@ -125,8 +122,6 @@ class MyRobot(MagicRobot):
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.driveTrain.enableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperRight, ButtonEvent.kOnPress, self.navx.reset)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.goToDist.start)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.goToDist.stop)
 
         self.driveTrain.setBraking(True)
         self.driveTrain.resetDistTraveled()
@@ -143,8 +138,6 @@ class MyRobot(MagicRobot):
         driveRightY = utils.math.expScale(self.xboxMap.getDriveRight(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
         # unused for now # driveLeftX = utils.math.expScale(self.xboxMap.getDriveLeftHoriz(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
         driveRightX = utils.math.expScale(self.xboxMap.getDriveRightHoriz(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
-
-        self.goToDist.engage()
         driveComponent = False
 
         if self.xboxMap.getDriveX() == True:
