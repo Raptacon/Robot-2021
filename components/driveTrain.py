@@ -29,6 +29,7 @@ class DriveTrain():
     smartDashTable = NetworkTables.getTable("SmartDashboard")
 
     # Encoder variables
+    # Need to phase these out into config instead
     leftSideSensorInverted = True
     rightSideSensorInverted = False
 

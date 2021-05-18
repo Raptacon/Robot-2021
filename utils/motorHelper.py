@@ -8,6 +8,9 @@ from .UnitEnums import positionUnits, velocityUnits
 class NoCurrentLimits(Exception):
     pass
 
+class UnknownMotor(Exception):
+    pass
+
 def createMotor(motorDescp, motors = {}):
     '''This is where all motors are set up.
     Motors include CAN Talons, CAN Talon Followers, CAN Talon FX, CAN Talon FX Followers, and SparkMax and its follower.
@@ -67,12 +70,10 @@ def createMotor(motorDescp, motors = {}):
         setREVCurrentLimits(motor, motorDescp)
 
     else:
-        print("Unknown Motor")
+        raise UnknownMotor("Motor "+str(motorDescp['type']+" is not known."))
 
     if 'inverted' in motorDescp:
         motor.setInverted(motorDescp['inverted'])
-
-
 
     return motor
 
