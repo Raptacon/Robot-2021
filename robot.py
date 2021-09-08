@@ -23,7 +23,10 @@ from components.feederMap import FeederMap
 from components.navx import Navx
 from components.turnToAngle import TurnToAngle
 from components.driveTrainGoToDist import GoToDist
-from components.ballCounter import ballCounter
+from components.BallCounter import ballCounter
+from components.autoAlign import AutoAlign
+from components.autoShoot import AutoShoot
+from components.lidar import Lidar
 
 # Other imports:
 from robotMap import RobotMap, XboxMap
@@ -55,6 +58,8 @@ class MyRobot(MagicRobot):
     scorpionLoader: ScorpionLoader
     navx: Navx
     turnToAngle: TurnToAngle
+    autoAlign: AutoAlign
+    autoShoot: AutoShoot
     lidar: Lidar
     goToDist: GoToDist
     ballCounter: ballCounter
@@ -98,7 +103,9 @@ class MyRobot(MagicRobot):
         testComponentCompatibility(self, Pneumatics)
         testComponentCompatibility(self, Elevator)
         testComponentCompatibility(self, ScorpionLoader)
+        testComponentCompatibility(self, AutoAlign)
         testComponentCompatibility(self, TestBoard)
+        testComponentCompatibility(self, AutoShoot)
         testComponentCompatibility(self, FeederMap)
         testComponentCompatibility(self, Lidar)
         testComponentCompatibility(self, LoaderLogic)
@@ -116,7 +123,7 @@ class MyRobot(MagicRobot):
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kX, ButtonEvent.kOnPress, self.pneumatics.toggleLoader)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kY, ButtonEvent.kOnPress, self.loader.setAutoLoading)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kB, ButtonEvent.kOnPress, self.loader.setManualLoading)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnPress, self.shooter.shootBalls)
+        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnPress, self.shooter.startShooting)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnPress, self.loader.stopLoading)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnRelease, self.shooter.doneShooting)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnRelease, self.loader.determineNextAction)
@@ -125,6 +132,10 @@ class MyRobot(MagicRobot):
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.elevator.setLower)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.elevator.stop)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.driveTrain.enableCreeperMode)
+        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnPress, self.loader.stopLoading)
+        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnRelease, self.shooter.doneShooting)
+        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnRelease, self.loader.determineNextAction)
+        self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kA, ButtonEvent.kOnRelease, self.autoShoot.stop)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperLeft, ButtonEvent.kOnRelease, self.driveTrain.disableCreeperMode)
         self.buttonManager.registerButtonEvent(self.xboxMap.drive, XboxController.Button.kBumperRight, ButtonEvent.kOnPress, self.navx.reset)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kBumperLeft, ButtonEvent.kOnPress, self.goToDist.start)
@@ -134,32 +145,37 @@ class MyRobot(MagicRobot):
         self.driveTrain.resetDistTraveled()
 
         self.shooter.autonomousDisabled()
+        self.prevAState = False
 
     def teleopPeriodic(self):
         """
-        Must include. Called running teleop.
+        Must include. Called repeatedly while running teleop.
         """
         self.xboxMap.controllerInput()
 
-        driveLeftY = utils.math.expScale(self.xboxMap.getDriveLeft(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
-        driveRightY = utils.math.expScale(self.xboxMap.getDriveRight(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
-        # unused for now # driveLeftX = utils.math.expScale(self.xboxMap.getDriveLeftHoriz(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
-        driveRightX = utils.math.expScale(self.xboxMap.getDriveRightHoriz(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
+        #This variable determines whether to use controller input for the drivetrain or not.
+        #If we are using a command (such as auto align) that uses the drivetrain, we don't want to use the controller's input because it would overwrite
+        #what the component is doing.
+        executingDriveCommand = False
 
-        self.goToDist.engage()
-        driveComponent = False
+        driveLeft = utils.math.expScale(self.xboxMap.getDriveLeft(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
+        driveRight = utils.math.expScale(self.xboxMap.getDriveRight(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
 
-        if self.xboxMap.getDriveX() == True:
-            driveComponent = True
-            self.turnToAngle.setIsRunning()
-        else:
-            self.turnToAngle.stop()
+        self.autoShoot.engage()
+        if self.xboxMap.getDriveA() == True:
+            executingDriveCommand = True
+            self.autoAlign.setShootAfterComplete(True)
+            self.autoAlign.engage()
+        elif self.xboxMap.getDriveA() == False and self.prevAState == True:
+            self.autoAlign.stop()
+            self.autoShoot.stop()
+            self.shooterMotors.stopShooter()
+            self.shooterMotors.stopLoader()
+        self.prevAState = self.xboxMap.getDriveA()
 
-        if not driveComponent:
-            if self.arcadeMode:
-                self.driveTrain.setArcade(driveLeftY, -1 * driveRightX)
-            else:
-                self.driveTrain.setTank(driveLeftY, driveRightY)
+        if not executingDriveCommand:
+            self.autoAlign.reset_integral()
+            self.driveTrain.setTank(driveLeft, driveRight)
 
         self.scorpionLoader.checkController()
 

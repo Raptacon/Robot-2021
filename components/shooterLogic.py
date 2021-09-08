@@ -1,8 +1,8 @@
 from robotMap import XboxMap
+import logging as log
 from components.shooterMotors import ShooterMotorCreation, Direction
 from components.breakSensors import Sensors, State
-from components.feederMap import FeederMap, Type
-from components.ballCounter import ballCounter
+from components.BallCounter import ballCounter
 from magicbot import StateMachine, state, timed_state, tunable, feedback
 
 class ShooterLogic(StateMachine):
@@ -11,16 +11,15 @@ class ShooterLogic(StateMachine):
 
     # Component/module related things
     shooterMotors: ShooterMotorCreation
-    feeder: FeederMap
     sensors: Sensors
     xboxMap: XboxMap
     ballCounter: ballCounter
-    speedTolerance = tunable(50)
+    speedTolerance = tunable(75)
 
     # Tunables
     shootingLoaderSpeed = tunable(.4)
     autoShootingSpeed = tunable(4800)
-    teleShootingSpeed = tunable(5300)
+    teleShootingSpeed = tunable(5100)
 
     # Other variables
     isSetup = False
@@ -29,6 +28,8 @@ class ShooterLogic(StateMachine):
 
     def on_enable(self):
         """Called when bot is enabled."""
+        self.running = False
+        self.start = False
         self.isAutonomous = False
         self.isSetup = True
 
@@ -40,8 +41,14 @@ class ShooterLogic(StateMachine):
         """Indicates if the robot is not in autonomous mode."""
         self.isAutonomous = False
 
+    def setRPM(self, rpm):
+        self.teleShootingSpeed = rpm
+
+    @state
     def shootBalls(self):
         """Executes smart shooter."""
+        self.start = False
+        self.running = True
         if self.shooterMotors.isLoaderRunning() or self.shooterMotors.isShooterRunning():
             return False
         self.next_state('initShooting')
@@ -49,6 +56,8 @@ class ShooterLogic(StateMachine):
 
     def doneShooting(self):
         """Finishes shooting process and reverts back to appropriate mode."""
+        self.start = False
+        self.running = False
         self.next_state('finishShooting')
 
     @feedback
@@ -73,6 +82,7 @@ class ShooterLogic(StateMachine):
         """Smart shooter initialization (reversing if necessary)."""
         if self.sensors.shootingSensor(State.kTripped):
             self.shooterMotors.runLoader(self.shootingLoaderSpeed, Direction.kBackwards)
+            self.next_state('initShooting')
 
         else:
             self.shooterMotors.stopLoader()
@@ -94,7 +104,12 @@ class ShooterLogic(StateMachine):
         """
         if not self.isAutonomous:
             self.shooterMotors.runShooter(self.teleShootingSpeed)
-            self.feeder.run(Type.kLoader)
+            if self.isShooterUpToSpeed():
+                log.error("Shoottinginoiansdonosg")
+                self.shooterMotors.runLoader(self.shootingLoaderSpeed, Direction.kForwards)
+            else:
+                self.shooterMotors.runLoader(0, Direction.kForwards)
+                self.next_state('runShooter')
 
         elif self.isAutonomous:
             self.shooterMotors.runShooter(self.autoShootingSpeed)
@@ -108,7 +123,8 @@ class ShooterLogic(StateMachine):
 
     @state
     def finishShooting(self):
-        """Stops shooter-related motors, resets ball count and moves to idle state."""
+        """Stops shooter-related motors and moves to idle state."""
+        self.running = False
         self.shooterMotors.stopLoader()
         self.shooterMotors.stopShooter()
         self.ballCounter.resetBallCount()
@@ -117,9 +133,13 @@ class ShooterLogic(StateMachine):
     @state(first = True)
     def idling(self):
         """First state. Does nothing here. StateMachine returns to this state when not shooting."""
-        pass
+        if self.start == True and self.running == False:
+            self.next_state('shootBalls')
 
     def execute(self):
         """Constantly runs state machine. Necessary for function."""
         self.engage()
         super().execute()
+
+    def startShooting(self):
+        self.start = True

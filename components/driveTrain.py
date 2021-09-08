@@ -5,6 +5,7 @@ import math
 import wpilib.drive
 import logging as log
 from networktables import NetworkTables
+import ctre
 
 from magicbot import tunable
 class ControlMode(Enum):
