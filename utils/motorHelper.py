@@ -2,11 +2,8 @@
 
 import rev
 import ctre
-<<<<<<< HEAD
-=======
 import logging as log
 from .UnitEnums import positionUnits, velocityUnits
->>>>>>> origin
 
 def createMotor(motorDescp, motors = {}):
     '''This is where all motors are set up.
@@ -206,11 +203,6 @@ class WPI_TalonFXFeedback(ctre.WPI_TalonFX):
             # This is so that we can initialize a motor as percentoutput but also use an encoder
             self.controlType = ctre.ControlMode.PercentOutput
         else:
-<<<<<<< HEAD
-            print("Unrecognized control type: ",self.ControlType)
-
-        self.configSelectedFeedbackSensor(ctre.FeedbackDevice(self.pid['feedbackDevice']), 0, 10)
-=======
             log.error("Unrecognized control type: " + str(self.ControlType))
 
         if self.pid["feedbackDevice"] == "IntegratedSensor":
@@ -221,7 +213,6 @@ class WPI_TalonFXFeedback(ctre.WPI_TalonFX):
             return
 
         self.configSelectedFeedbackSensor(feedbackDevice, 0, 10)
->>>>>>> origin
         self.setSensorPhase(self.pid['sensorPhase'])
         self.kPreScale = self.pid['kPreScale']
 

@@ -4,11 +4,8 @@ import ctre
 import math
 import wpilib.drive
 import logging as log
-<<<<<<< HEAD
 import ctre
-=======
 from networktables import NetworkTables
->>>>>>> origin
 
 from magicbot import tunable
 class ControlMode(Enum):
