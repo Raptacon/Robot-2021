@@ -2,6 +2,7 @@ from robotMap import XboxMap
 from components.shooterMotors import ShooterMotorCreation, Direction
 from components.breakSensors import Sensors, State
 from components.feederMap import FeederMap, Type
+from components.ballCounter import ballCounter
 from magicbot import StateMachine, state, timed_state, tunable, feedback
 
 class LoaderLogic(StateMachine):
@@ -13,6 +14,7 @@ class LoaderLogic(StateMachine):
     feeder: FeederMap
     sensors: Sensors
     xboxMap: XboxMap
+    ballCounter: ballCounter
 
     # Tunable
     automaticLoaderSpeed = tunable(.4)
@@ -76,8 +78,8 @@ class LoaderLogic(StateMachine):
 
     @timed_state(duration = loaderStoppingDelay, next_state = 'checkForBall')
     def stopBall(self):
-        """Stops ball after a short delay."""
-        pass
+        """Stops ball after a short delay, notify ballCounter of new ball"""
+        self.ballCounter.addBall()
 
     @state
     def shooting(self):

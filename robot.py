@@ -23,6 +23,7 @@ from components.feederMap import FeederMap
 from components.navx import Navx
 from components.turnToAngle import TurnToAngle
 from components.driveTrainGoToDist import GoToDist
+from components.ballCounter import ballCounter
 
 # Other imports:
 from robotMap import RobotMap, XboxMap
@@ -56,6 +57,7 @@ class MyRobot(MagicRobot):
     turnToAngle: TurnToAngle
     lidar: Lidar
     goToDist: GoToDist
+    ballCounter: ballCounter
 
     # Test code:
     testBoard: TestBoard

@@ -2,6 +2,7 @@ from robotMap import XboxMap
 from components.shooterMotors import ShooterMotorCreation, Direction
 from components.breakSensors import Sensors, State
 from components.feederMap import FeederMap, Type
+from components.ballCounter import ballCounter
 from magicbot import StateMachine, state, timed_state, tunable, feedback
 
 class ShooterLogic(StateMachine):
@@ -13,6 +14,7 @@ class ShooterLogic(StateMachine):
     feeder: FeederMap
     sensors: Sensors
     xboxMap: XboxMap
+    ballCounter: ballCounter
     speedTolerance = tunable(50)
 
     # Tunables
@@ -106,9 +108,10 @@ class ShooterLogic(StateMachine):
 
     @state
     def finishShooting(self):
-        """Stops shooter-related motors and moves to idle state."""
+        """Stops shooter-related motors, resets ball count and moves to idle state."""
         self.shooterMotors.stopLoader()
         self.shooterMotors.stopShooter()
+        self.ballCounter.resetBallCount()
         self.next_state('idling')
 
     @state(first = True)
