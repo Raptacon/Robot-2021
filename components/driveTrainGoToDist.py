@@ -12,11 +12,20 @@ class GoToDist(StateMachine):
     starting = False
     running = False
     targetDist = 0
-    dumbSpeeds = [.3, .2, .15, .1]
-    dumbSpeedLimits = [36, 12, 8, 5]
+    dumbSpeedSections = [[36, .3],[12, .2],[8, .15][5, .1]]
 
     def setTargetDist(self, distance):
         self.targetDist = distance
+
+    def setDumbSpeedSections(self, sections:list)
+        """
+        Accepts a 2D list with distances in feet
+        and speeds from 0 to 1 to determine speeds
+        at different distances. Speed should decrease
+        with distance.
+        """
+        
+        self.dumbSpeedSections = sorted(sections, key=lambda x: x[1], reverse = True)
 
     def start(self):
         self.starting = True
@@ -53,13 +62,13 @@ class GoToDist(StateMachine):
 
         self.nextSpeed = 0
         totalOffset = self.targetDist - self.dist
-        for i, limit in enumerate(self.dumbSpeedLimits):
-            if abs(totalOffset) > limit:
-                self.dumbSpeed = self.dumbSpeeds[i]
+        for section in self.dumbSpeedSections:
+            if abs(totalOffset) > section[0]:
+                self.dumbSpeed = section[1]
                 break
 
         if self.dumbSpeed == 0:
-            self.dumbSpeed = self.dumbSpeeds[-1]
+            self.dumbSpeed = self.dumbSpeedSections[-1][1]
 
         if self.dist < self.targetDist - self.dumbTolerance:
             self.nextSpeed = -1 * self.dumbSpeed
