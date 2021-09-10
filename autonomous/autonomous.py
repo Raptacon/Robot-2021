@@ -1,5 +1,6 @@
 from magicbot import AutonomousStateMachine, tunable, timed_state, state
 from components.driveTrain import DriveTrain
+from components.autoAlign import AutoAlign
 from components.shooterLogic import ShooterLogic
 from components.shooterMotors import ShooterMotorCreation
 from components.pneumatics import Pneumatics
@@ -10,6 +11,7 @@ class Autonomous(AutonomousStateMachine):
     time = 1.4
     MODE_NAME = "Offseason Autonomous"
     DEFAULT = True
+    autoAlign: autoAlign
     driveTrain: DriveTrain
     shooter: ShooterLogic
     shooterMotors: ShooterMotorCreation
@@ -19,6 +21,9 @@ class Autonomous(AutonomousStateMachine):
     @state(first=True)
     def turnToTarget(self):
         """Uses limelight to align to target"""
+        self.autoAlign.setShootAfterComplete(True)
+        self.autoShoot.setRPM()
+        self.autoAlign.engage()
 
     @state
     def engage_shooter(self):

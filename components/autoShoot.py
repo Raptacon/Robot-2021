@@ -141,6 +141,7 @@ class AutoShoot(StateMachine):
 
     starting = False
     stopping = False
+    finished = False
 
     @state
     def start(self):
@@ -187,10 +188,15 @@ class AutoShoot(StateMachine):
         # stop
         self.driveTrain.setTank(0, 0)
         # set rpm
-        self.shooter.setRPM(self.rpm)
+        if self.parameterRPM != 0:
+            self.shooter.setRPM(self.parameterRPM)
+        else:
+            self.shooter.setRPM(self.rpm)
         # shoot
         if not self.stopping:
+            self.shooter.autonomousEnabled()
             self.shooter.startShooting()
+        self.finished = True
         self.next_state("idling")
 
     @state(first=True)
@@ -205,9 +211,19 @@ class AutoShoot(StateMachine):
     def stop(self):
         self.stopping = True
         self.starting = False
+        self.parameterRPM = 0
         self.shooter.doneShooting()
         self.next_state("idling")
 
+    def setRPM(self, RPM):
+        """
+        This method should only be called if you need
+        to define the RPM, otherwise it will be chosen
+        based on the estimated distance to the target
+        """
+        self.parameterRPM = RPM
+
     def startAutoShoot(self):
         self.stopping = False
+        self.finished = False
         self.starting = True

@@ -18,6 +18,8 @@ class AutoAlign(StateMachine):
 
     # Auto Align variables
     shootAfterComplete = False
+    starting = False
+    autoAlignFinished = False
     # Maximum horizontal offset before shooting in degrees
     maxAimOffset = tunable(.25)
     PIDAimOffset = tunable(2.1)
@@ -77,6 +79,7 @@ class AutoAlign(StateMachine):
                 # finish.
                 else:
                     log.info("Autoalign complete")
+                    self.autoAlignFinished = True
                     self.driveTrain.setTank(0, 0)
                     if self.shootAfterComplete:
                         self.autoShoot.startAutoShoot()
@@ -126,7 +129,15 @@ class AutoAlign(StateMachine):
 
     @state
     def idling(self):
-        pass
+        if self.starting:
+            self.next_state("start")
+            self.starting = False
+        else:
+            self.next_state("idling")
+
+    def startAutoAlign(self, ShootAft3rComplete):
+        self.shootAfterComplete = ShootAft3rComplete
+        self.starting = True
 
     def stop(self):
         self.next_state_now("idling")
