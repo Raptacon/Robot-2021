@@ -11,7 +11,7 @@ class Autonomous(AutonomousStateMachine):
     time = 1.4
     MODE_NAME = "Offseason Autonomous"
     DEFAULT = True
-    autoAlign: autoAlign
+    autoAlign: AutoAlign
     driveTrain: DriveTrain
     shooter: ShooterLogic
     shooterMotors: ShooterMotorCreation

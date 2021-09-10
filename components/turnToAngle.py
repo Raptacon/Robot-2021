@@ -21,11 +21,14 @@ class TurnToAngle():
     nextHeading = 0
     heading = 0
     originalHeading = 0
+    relativeToOriginal = 0
+
     turnAngle = tunable(10)
     speed = 0
     tolerance = tunable(.5)
     change = 0
     setSpeed = True
+
 
     def setup(self):
         self.heading = self.navx.getFusedHeading()
@@ -71,6 +74,10 @@ class TurnToAngle():
                 self.nextOutput = self.PIDController.calculate(measurement = self.heading, setpoint = self.nextHeading)
                 self.driveTrain.setTank(-1 * self.nextOutput, self.nextOutput)
 
+    def setRelative(self):
+        smallerDistance = self.originalHeading - self.heading
+        largerDistance = self.heading - self.originalHeading
+    
     @feedback
     def outputDisplay(self):
         return self.nextOutput
