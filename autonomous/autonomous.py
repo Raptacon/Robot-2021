@@ -18,19 +18,16 @@ class Autonomous(AutonomousStateMachine):
     pneumatics: Pneumatics
     drive_speed = tunable(.25)
 
+    rpm = 0 # Choose this based on path
+
     @state(first=True)
-    def turnToTarget(self):
+    def turnToTargetShoot(self):
         """Uses limelight to align to target"""
         self.autoAlign.setShootAfterComplete(True)
-        self.autoShoot.setRPM()
+        self.autoShoot.setRPM(self.rpm)
         self.autoAlign.engage()
-
-    @state
-    def engage_shooter(self):
-        """Starts shooter and fires"""
-        self.pneumatics.deployLoader()
-        self.shooter.shootBalls()
-        self.next_state('shooter_wait')
+        if self.autoAlign.autoAlignFinished and self.autoShoot.finished and self.shooterLogic.finished:
+            self.next_state("travel")
 
     @state
     def shooter_wait(self):
