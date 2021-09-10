@@ -28,6 +28,7 @@ class ShooterLogic(StateMachine):
 
     def on_enable(self):
         """Called when bot is enabled."""
+        self.finished = False
         self.running = False
         self.start = False
         self.isAutonomous = False
@@ -58,6 +59,7 @@ class ShooterLogic(StateMachine):
         """Finishes shooting process and reverts back to appropriate mode."""
         self.start = False
         self.running = False
+        self.finished = True
         self.next_state('finishShooting')
 
     @feedback
@@ -92,9 +94,6 @@ class ShooterLogic(StateMachine):
     def alignToTarget(self):
         """Aligns turret and/or drive train to the goal."""
         self.next_state('runShooter')
-        #NOTE: This is a temporary placeholder until we can get limelight alignment successfully implemented.
-        #      Useful logic would include: determining if the limelight can see the target before attempting
-        #      alignment, especially for autonomous.
 
     @state
     def runShooter(self):
@@ -143,3 +142,4 @@ class ShooterLogic(StateMachine):
 
     def startShooting(self):
         self.start = True
+        self.finished = False
