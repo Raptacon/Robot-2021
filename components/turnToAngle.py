@@ -1,10 +1,13 @@
 from components.driveTrain import DriveTrain
+from networktables import NetworkTables as networktable
 from magicbot import tunable, feedback
 from wpilib import controller
 
 import navx
 
 class TurnToAngle():
+
+    smartTable = networktable.getTable('SmartDashboard')
 
     #PID
     P = tunable(0.01)
@@ -23,12 +26,15 @@ class TurnToAngle():
     originalHeading = 0
     relativeToOriginal = 0
 
-    turnAngle = tunable(10)
+    turnAngle = 0
     speed = 0
     tolerance = tunable(.5)
     change = 0
     setSpeed = True
 
+    def setTurnAngle(self, turn):
+        self.isRunning = True
+        self.turnAngle = turn
 
     def setup(self):
         self.heading = self.navx.getFusedHeading()
@@ -104,5 +110,6 @@ class TurnToAngle():
 
     def execute(self):
         self.output()
+        self.smartTable.putNumber("Turn Angle", self.turnAngle)
         self.PIDController = controller.PIDController(Kp= self.P, Ki= self.I, Kd= self.D, period = self.time)
         self.heading = self.navx.getFusedHeading()

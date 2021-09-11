@@ -14,10 +14,12 @@ class GoToDist(StateMachine):
     targetDist = 0
     dumbSpeedSections = [[36, .3],[12, .2],[8, .15],[5, .1]]
 
-    def setTargetDist(self, distance):
+    def setTargetDist(self, distance, start=False):
         """
         Call this to set the target distance
         (In Feet)
+        :param: start: if True, will go the distance on 
+        next frame
         """
         self.targetDist = distance
 

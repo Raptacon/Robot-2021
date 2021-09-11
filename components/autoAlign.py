@@ -13,7 +13,7 @@ class AutoAlign(StateMachine):
     """
 
     compatString = ["doof"]
-    time = 0.01
+    time = 0.1
     driveTrain: DriveTrain
 
     # Auto Align variables
@@ -26,8 +26,8 @@ class AutoAlign(StateMachine):
     DumbSpeed = .09
 
     # PID
-    P = tunable(0.01)
-    I = tunable(0.01)
+    P = tunable(0.1)
+    I = tunable(0.05)
     D = tunable(0)
     inverted = False
     speed = 0
@@ -91,11 +91,13 @@ class AutoAlign(StateMachine):
     def adjust_self_right(self):
         """Turns the bot right"""
         self.driveTrain.setTank(-1 * self.speed, self.speed)
+        self.next_state("start")
 
     @timed_state(duration=time, next_state="start")
     def adjust_self_left(self):
         """Turns the bot left"""
         self.driveTrain.setTank(self.speed, -1 * self.speed)
+        self.next_state("start")
 
     def calc_PID(self, error):
         """
@@ -135,7 +137,7 @@ class AutoAlign(StateMachine):
         else:
             self.next_state("idling")
 
-    def startAutoAlign(self, ShootAft3rComplete):
+    def startAutoAlign(self, ShootAft3rComplete=False):
         self.shootAfterComplete = ShootAft3rComplete
         self.starting = True
 
