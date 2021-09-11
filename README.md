@@ -1,4 +1,5 @@
 ![Raptacon (Team 3200) CI Pipeline](https://github.com/Raptacon/Robot-2021/workflows/Raptacon%20(Team%203200)%20CI%20Pipeline/badge.svg)
+[Build link](https://github.com/Raptacon/Robot-2021/actions/workflows/robot_ci.yml)
 
 ## Welcome to Robot 2021
 
