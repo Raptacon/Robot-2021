@@ -18,7 +18,7 @@ class GoToDist(StateMachine):
         """
         Call this to set the target distance
         (In Feet)
-        :param: start: if True, will go the distance on 
+        :param: start: if True, will go the distance on
         next frame
         """
         self.targetDist = distance

@@ -80,9 +80,10 @@ class TurnToAngle():
                 self.nextOutput = self.PIDController.calculate(measurement = self.heading, setpoint = self.nextHeading)
                 self.driveTrain.setTank(-1 * self.nextOutput, self.nextOutput)
 
-    def setRelative(self):
-        smallerDistance = self.originalHeading - self.heading
-        largerDistance = self.heading - self.originalHeading
+    # Unused
+    # def setRelative(self):
+    #     smallerDistance = self.originalHeading - self.heading
+    #     largerDistance = self.heading - self.originalHeading
     
     @feedback
     def outputDisplay(self):

@@ -34,7 +34,6 @@ from components.lidar import Lidar
 # Other imports:
 from robotMap import RobotMap, XboxMap
 from networktables import NetworkTables
-from networktables.util import ChooserControl
 from utils.componentUtils import testComponentCompatibility
 from utils.motorHelper import createMotor
 from utils.sensorFactories import gyroFactory, breaksensorFactory
@@ -175,7 +174,7 @@ class MyRobot(MagicRobot):
         executingDriveCommand = False
 
         driveLeftY = utils.math.expScale(self.xboxMap.getDriveLeft(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
-        driveLeftX = utils.math.expScale(self.xboxMap.getDriveLeftHoriz(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
+        driveRightX = utils.math.expScale(self.xboxMap.getDriveRightHoriz(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
         driveRightY = utils.math.expScale(self.xboxMap.getDriveRight(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
 
         self.autoShoot.engage()

@@ -1,5 +1,4 @@
-from magicbot import AutonomousStateMachine, tunable, timed_state, state
-from networktables import NetworkTables as networktable
+from magicbot import AutonomousStateMachine, tunable, state
 from wpilib import SendableChooser
 from components.driveTrainGoToDist import GoToDist
 from components.turnToAngle import TurnToAngle
@@ -8,7 +7,7 @@ from components.autoShoot import AutoShoot
 from components.shooterLogic import ShooterLogic
 from components.shooterMotors import ShooterMotorCreation
 from components.pneumatics import Pneumatics
-from components.ballCounter import ballCounter
+# from components.ballCounter import ballCounter Unused for now
 
 class Autonomous(AutonomousStateMachine):
     """Creates the autonomous code"""
