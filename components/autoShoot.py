@@ -110,6 +110,7 @@ class AutoShoot(StateMachine):
     """
 
     compatString = ["doof"]
+    parameterRPM = 0
     dist = int(0)
     angle = int(0)
     smartTable = networktable.getTable('SmartDashboard')
@@ -213,7 +214,7 @@ class AutoShoot(StateMachine):
         self.starting = False
         self.parameterRPM = 0
         self.shooter.doneShooting()
-        self.next_state("idling")
+        self.next_state_now("idling")
 
     def setRPM(self, RPM):
         """

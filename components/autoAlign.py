@@ -23,10 +23,10 @@ class AutoAlign(StateMachine):
     # Maximum horizontal offset before shooting in degrees
     maxAimOffset = tunable(.25)
     PIDAimOffset = tunable(2.1)
-    DumbSpeed = .09
+    DumbSpeed = .15
 
     # PID
-    P = tunable(0.1)
+    P = tunable(0.01)
     I = tunable(0.05)
     D = tunable(0)
     inverted = False
@@ -91,13 +91,11 @@ class AutoAlign(StateMachine):
     def adjust_self_right(self):
         """Turns the bot right"""
         self.driveTrain.setTank(-1 * self.speed, self.speed)
-        self.next_state("start")
 
     @timed_state(duration=time, next_state="start")
     def adjust_self_left(self):
         """Turns the bot left"""
         self.driveTrain.setTank(self.speed, -1 * self.speed)
-        self.next_state("start")
 
     def calc_PID(self, error):
         """
@@ -142,4 +140,5 @@ class AutoAlign(StateMachine):
         self.starting = True
 
     def stop(self):
+        self.stopping = True
         self.next_state_now("idling")
