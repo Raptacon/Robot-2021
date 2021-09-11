@@ -96,9 +96,9 @@ class MyRobot(MagicRobot):
 
         # Path selection dropdown for autonomous
         self.LCRDropDown = wpilib.SendableChooser()
-        self.LCRDropDown.setDefaultOption("Right", str)
-        self.LCRDropDown.addOption("Center", str)
-        self.LCRDropDown.addOption("Left", str)
+        self.LCRDropDown.setDefaultOption("Right", "Right")
+        self.LCRDropDown.addOption("Center", "Center")
+        self.LCRDropDown.addOption("Left", "Left")
         SmartDashboard.putData("Path Selector", self.LCRDropDown)
 
         self.smartDashboardTable = NetworkTables.getTable('SmartDashboard')

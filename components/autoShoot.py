@@ -220,8 +220,11 @@ class AutoShoot(StateMachine):
         This method should only be called if you need
         to define the RPM, otherwise it will be chosen
         based on the estimated distance to the target
+
+        If RPM is 0, the variable will not be changed.
         """
-        self.parameterRPM = RPM
+        if RPM != 0:
+            self.parameterRPM = RPM
 
     def startAutoShoot(self):
         self.stopping = False

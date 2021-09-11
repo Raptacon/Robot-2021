@@ -17,6 +17,7 @@ class GoToDist(StateMachine):
     def setTargetDist(self, distance):
         """
         Call this to set the target distance
+        (In Feet)
         """
         self.targetDist = distance
 
