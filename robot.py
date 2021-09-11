@@ -21,6 +21,9 @@ from components.lidar import Lidar
 from components.elevator import Elevator
 from components.scorpionLoader import ScorpionLoader
 from components.feederMap import FeederMap
+from components.autoAlign import AutoAlign
+from components.autoShoot import AutoShoot
+from components.lidar import Lidar
 from components.navx import Navx
 from components.turnToAngle import TurnToAngle
 from components.driveTrainGoToDist import GoToDist
@@ -58,6 +61,8 @@ class MyRobot(MagicRobot):
     pneumatics: Pneumatics
     elevator: Elevator
     scorpionLoader: ScorpionLoader
+    autoAlign: AutoAlign
+    autoShoot: AutoShoot
     navx: Navx
     turnToAngle: TurnToAngle
     autoAlign: AutoAlign
@@ -184,8 +189,11 @@ class MyRobot(MagicRobot):
         self.prevAState = self.xboxMap.getDriveA()
 
         if not executingDriveCommand:
+            if self.arcadeMode:
+                self.driveTrain.setArcade(driveLeftY, -1 * driveRightX)
+            else:
+                self.driveTrain.setTank(driveLeftY, driveRightY)
             self.autoAlign.reset_integral()
-            self.driveTrain.setTank(driveLeft, driveRight)
 
         self.scorpionLoader.checkController()
 

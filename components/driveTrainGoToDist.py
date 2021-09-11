@@ -15,6 +15,9 @@ class GoToDist(StateMachine):
     dumbSpeedSections = [[36, .3],[12, .2],[8, .15],[5, .1]]
 
     def setTargetDist(self, distance):
+        """
+        Call this to set the target distance
+        """
         self.targetDist = distance
 
     def setDumbSpeedSections(self, sections:list):
@@ -28,6 +31,9 @@ class GoToDist(StateMachine):
         self.dumbSpeedSections = sorted(sections, key=lambda x: x[1], reverse = True)
 
     def start(self):
+        """
+        Call this to start the process
+        """
         self.starting = True
 
     def stop(self):
@@ -37,6 +43,10 @@ class GoToDist(StateMachine):
 
     @state(first=True)
     def idling(self):
+        """
+        THIS IS A STATE
+        DO NOT CALL IT AS A METHOD
+        """
         self.initDist = 0
         if self.starting and not self.running:
             if self.targetDist != 0:
@@ -49,6 +59,10 @@ class GoToDist(StateMachine):
 
     @state
     def recordInitDist(self):
+        """
+        THIS IS A STATE
+        DO NOT CALL IT AS A METHOD
+        """
         self.running = True
         self.starting = False
         self.initDist = self.driveTrain.getEstTotalDistTraveled()
@@ -57,6 +71,10 @@ class GoToDist(StateMachine):
 
     @state
     def goToDist(self):
+        """
+        THIS IS A STATE
+        DO NOT CALL IT AS A METHOD
+        """
         self.dist = self.driveTrain.getEstTotalDistTraveled()
         self.dumbSpeed = 0
 
