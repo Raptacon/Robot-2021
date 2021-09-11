@@ -23,16 +23,22 @@ class Autonomous(AutonomousStateMachine):
     drive_speed = tunable(.25)
 
     rpm = 0 # Choose this based on path
+    travelArray = [] # Build this based on path
 
     @state(first=True)
     def turnToTargetShoot(self):
         """Uses limelight to align to target and shoot"""
         self.path = self.LCRDropDown.getSelected()
+
         self.autoAlign.setShootAfterComplete(True)
         self.autoShoot.setRPM(self.rpm)
         self.autoAlign.engage()
+        if path == "Right":
+                log.error("Hi Mom!")
         if self.autoAlign.autoAlignFinished and self.autoShoot.finished and self.shooterLogic.finished:
             self.next_state("travel")
+        else:
+            self.next_state("turnToTargetShoot")
     
     @state
     def travel(self):
