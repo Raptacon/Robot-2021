@@ -130,6 +130,7 @@ class MyRobot(MagicRobot):
     def autonomousInit(self):
         """Run when autonomous is enabled."""
         self.shooter.autonomousEnabled()
+        self.turnToAngle.setup()
         self.loader.stopLoading()
         self.autoAlign.engage()
         self.autoShoot.engage()
@@ -178,19 +179,18 @@ class MyRobot(MagicRobot):
         driveLeftX = utils.math.expScale(self.xboxMap.getDriveLeftHoriz(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
         driveRightY = utils.math.expScale(self.xboxMap.getDriveRight(), self.sensitivityExponent) * self.driveTrain.driveMotorsMultiplier
 
-        self.shooterMotors.stopShooter()
-        self.shooterMotors.stopLoader()
-
         self.autoShoot.engage()
-        self.autoAlign.engage()
         if self.xboxMap.getDriveA() == True:
             executingDriveCommand = True
+            self.autoAlign.engage()
             self.autoAlign.startAutoAlign(True)
         elif self.xboxMap.getDriveA() == False and self.prevAState == True:
             print("RESTETSTA ")
             self.shooter.doneShooting()
             self.autoAlign.stop()
             self.autoShoot.stop()
+            self.shooterMotors.stopShooter()
+            self.shooterMotors.stopLoader()
         self.prevAState = self.xboxMap.getDriveA()
 
         if not executingDriveCommand:

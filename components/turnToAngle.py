@@ -10,7 +10,7 @@ class TurnToAngle():
     smartTable = networktable.getTable('SmartDashboard')
 
     #PID
-    P = tunable(0.01)
+    P = tunable(1)
     I = tunable(0.01)
     D = tunable(0)
     time = 0.01
@@ -33,8 +33,8 @@ class TurnToAngle():
     setSpeed = True
 
     def setTurnAngle(self, turn):
-        self.isRunning = True
         self.turnAngle = turn
+        self.setIsRunning()
 
     def setup(self):
         self.heading = self.navx.getFusedHeading()
@@ -67,7 +67,7 @@ class TurnToAngle():
             elif abs(self.change) <= 90 and abs(self.change) > 20:
                 self.speed = .15
             elif abs(self.change) <= 20:
-                self.speed = .09
+                self.speed = .13
 
             if self.setSpeed == True:
                 if self.change > 0:

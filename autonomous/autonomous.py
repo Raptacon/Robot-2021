@@ -27,12 +27,12 @@ class Autonomous(AutonomousStateMachine):
     rpm = 0 # Choose this based on path
     CenterRPM = 5000 # Placeholder
 
-    travelArray = [] # Build this based on path
+    # travelArray = [] # Build this based on path
     dumbSpeedSections = [[10, .5], [5, .3], [2, .1]] # Will probably need fixes
-    rightTA = [["turnAbs", 180], ["forward", 5]]
+    travelArray = [["turnAbs", 180], ["forward", 5]]
     centerTA = []
 
-    @state(first=True)
+    @state#(first=True)
     def determinePath(self):
         self.path = self.LCRDropDown.getSelected()
         if self.path == "Right":
@@ -54,12 +54,12 @@ class Autonomous(AutonomousStateMachine):
 
         self.autoAlign.setShootAfterComplete(True)
         self.autoAlign.engage()
-        if self.autoAlign.autoAlignFinished and self.autoShoot.finished and self.shooterLogic.finished:
+        if self.autoAlign.autoAlignFinished and self.autoShoot.finished and self.shooter.finished:
             self.next_state("travel")
         else:
             self.next_state("turnToTargetShoot")
     
-    @state
+    @state(first=True)
     def travel(self):
         """
         Follow an array of turns and lateral motions
@@ -67,8 +67,11 @@ class Autonomous(AutonomousStateMachine):
         """
         self.goToDist.setDumbSpeedSections(self.dumbSpeedSections)
         
-        for motion in self.travelArray:
-            if motion[0] == "turnAbs":
-                self.turnToAngle.setTurnAngle(motion[1])
-            elif motion[0] == "forward":
-                self.goToDist.setTargetDist(motion[1], True)
+        self.turnToAngle.setTurnAngle(180)
+        self.turnToAngle.execute()
+        self.next_state("travel")
+        # for motion in self.travelArray:
+        #     if motion[0] == "turnAbs":
+        #         self.turnToAngle.setTurnAngle(motion[1])
+        #     elif motion[0] == "forward":
+        #         self.goToDist.setTargetDist(motion[1], True)
