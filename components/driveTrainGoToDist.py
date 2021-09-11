@@ -12,12 +12,12 @@ class GoToDist(StateMachine):
     starting = False
     running = False
     targetDist = 0
-    dumbSpeedSections = [[36, .3],[12, .2],[8, .15][5, .1]]
+    dumbSpeedSections = [[36, .3],[12, .2],[8, .15],[5, .1]]
 
     def setTargetDist(self, distance):
         self.targetDist = distance
 
-    def setDumbSpeedSections(self, sections:list)
+    def setDumbSpeedSections(self, sections:list):
         """
         Accepts a 2D list with distances in feet
         and speeds from 0 to 1 to determine speeds

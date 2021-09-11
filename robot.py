@@ -5,6 +5,7 @@ Team 3200 Robot base class
 import wpilib
 from wpilib import XboxController
 from wpilib import SerialPort
+from wpilib import SmartDashboard
 from magicbot import MagicRobot, tunable
 
 # Component imports:
@@ -23,7 +24,7 @@ from components.feederMap import FeederMap
 from components.navx import Navx
 from components.turnToAngle import TurnToAngle
 from components.driveTrainGoToDist import GoToDist
-from components.BallCounter import ballCounter
+from components.ballCounter import ballCounter
 from components.autoAlign import AutoAlign
 from components.autoShoot import AutoShoot
 from components.lidar import Lidar
@@ -31,6 +32,7 @@ from components.lidar import Lidar
 # Other imports:
 from robotMap import RobotMap, XboxMap
 from networktables import NetworkTables
+from networktables.util import ChooserControl
 from utils.componentUtils import testComponentCompatibility
 from utils.motorHelper import createMotor
 from utils.sensorFactories import gyroFactory, breaksensorFactory
@@ -85,6 +87,14 @@ class MyRobot(MagicRobot):
         self.MXPserial.setWriteBufferSize(2 * ReadBufferValue)
         self.MXPserial.setWriteBufferMode(SerialPort.WriteBufferMode.kFlushOnAccess)
         self.MXPserial.setTimeout(.1)
+
+
+        # Path selection dropdown for autonomous
+        self.LCRDropDown = wpilib.SendableChooser()
+        self.LCRDropDown.setDefaultOption("Right", str)
+        self.LCRDropDown.addOption("Center", str)
+        self.LCRDropDown.addOption("Left", str)
+        SmartDashboard.putData("Path Selector", self.LCRDropDown)
 
         self.smartDashboardTable = NetworkTables.getTable('SmartDashboard')
 

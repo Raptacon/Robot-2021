@@ -2,7 +2,7 @@ from robotMap import XboxMap
 import logging as log
 from components.shooterMotors import ShooterMotorCreation, Direction
 from components.breakSensors import Sensors, State
-from components.BallCounter import ballCounter
+from components.ballCounter import ballCounter
 from magicbot import StateMachine, state, timed_state, tunable, feedback
 
 class ShooterLogic(StateMachine):
