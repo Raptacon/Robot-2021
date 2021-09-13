@@ -12,7 +12,7 @@ class ballCounter:
     def on_enable(self):
         self.prevLoadingSensorState = State.kNotTripped
         self.prevShootngSensorState = State.kNotTripped
-        self.ballCount = 0
+        self.ballCount = None
 
     def addBall(self):
         if self.ballCount <= 4:
@@ -34,6 +34,9 @@ class ballCounter:
 
     def getBallCount(self):
         return self.ballCount
+
+    def setBallCount(self, balls):
+        self.ballCount = balls
 
     def execute(self):
         self.currentLoadingSensorState = self.sensors.loadingSensor(State.kTripped)

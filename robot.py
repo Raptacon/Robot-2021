@@ -142,6 +142,7 @@ class MyRobot(MagicRobot):
 
         self.driveTrain.setBraking(True)
         self.driveTrain.resetDistTraveled()
+        self.ballCounter.setBallCount(int(self.initialBallCount))
 
         self.shooter.autonomousDisabled()
         self.prevAState = False
@@ -239,6 +240,7 @@ class MyRobot(MagicRobot):
         What the robot runs on disabled start
         NEVER RUN ANYTHING THAT MOVES ANYTHING HERE
         """
+        self.initialBallCount = tunable(3)
         self.driveTrain.setBraking(False)
     
     def disabledPeriodic(self):
