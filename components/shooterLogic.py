@@ -2,7 +2,6 @@ from robotMap import XboxMap
 import logging as log
 from components.shooterMotors import ShooterMotorCreation, Direction
 from components.breakSensors import Sensors, State
-from components.ballCounter import ballCounter
 from magicbot import StateMachine, state, timed_state, tunable, feedback
 
 class ShooterLogic(StateMachine):
@@ -13,7 +12,6 @@ class ShooterLogic(StateMachine):
     shooterMotors: ShooterMotorCreation
     sensors: Sensors
     xboxMap: XboxMap
-    ballCounter: ballCounter
     speedTolerance = tunable(75)
 
     # Tunables
@@ -118,9 +116,6 @@ class ShooterLogic(StateMachine):
             if self.isShooterUpToSpeed():
                 self.next_state('autonomousShoot')
 
-        if(self.prevBreakSensorState != self.currentBreakSensorState
-        and self.currentBreakSensorState == False):
-            self.ballCounter.subtractBall()
 
         self.prevBreakSensorState = self.sensors.shootingSensor(State.kTripped)
 

@@ -1,11 +1,17 @@
 import logging as log
+from components.breakSensors import Sensors, State
+from networktables import NetworkTables
 
 class ballCounter:
     """Class meant to keep track of the number of balls currently in the hopper"""
 
+    SmartTable = NetworkTables.getTable("SmartDashboard")
     compatString = ["doof"]
+    sensors: Sensors
 
     def on_enable(self):
+        self.prevLoadingSensorState = State.kNotTripped
+        self.prevShootngSensorState = State.kNotTripped
         self.ballCount = 0
 
     def addBall(self):
@@ -30,4 +36,18 @@ class ballCounter:
         return self.ballCount
 
     def execute(self):
+        self.currentLoadingSensorState = self.sensors.loadingSensor(State.kTripped)
+        self.currentShootngSensorState = self.sensors.shootingSensor(State.kTripped)
+
+        if(self.currentLoadingSensorState != self.prevLoadingSensorState
+        and self.currentLoadingSensorState == False):
+            self.addBall()
+
+        if(self.currentShootngSensorState != self.prevShootngSensorState
+        and self.currentShootngSensorState == False):
+            self.subtractBall()
+
+        self.prevLoadingSensorState = self.currentLoadingSensorState
+        self.prevShootngSensorState = self.currentShootngSensorState
+        self.SmartTable.putNumber("BallCount", self.ballCount)
         pass
