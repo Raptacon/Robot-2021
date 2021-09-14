@@ -43,6 +43,9 @@ class ballCounter:
         self.currentLoadingSensorState = self.sensors.loadingSensor(State.kTripped)
         self.currentShootngSensorState = self.sensors.shootingSensor(State.kTripped)
 
+        # If the state of a loading sensor has changed AND it is unbroken,
+        # we assume a ball has entered/left and passed a break sensor
+        # and so a ball is added/subtracted
         if(self.currentLoadingSensorState != self.prevLoadingSensorState
         and self.currentLoadingSensorState == False):
             self.addBall()
