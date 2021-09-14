@@ -213,7 +213,7 @@ class AutoShoot(StateMachine):
         self.starting = False
         self.parameterRPM = 0
         self.shooter.doneShooting()
-        self.next_state_now("idling")
+        self.next_state("idling")
 
     def setRPM(self, RPM):
         """
