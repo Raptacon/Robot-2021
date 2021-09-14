@@ -11,8 +11,8 @@ class ballCounter:
     maxBalls = 4
 
     def on_enable(self):
-        self.prevLoadingSensorState = State.kNotTripped
-        self.prevShootngSensorState = State.kNotTripped
+        self.prevLoadingSensorTripped = State.kNotTripped
+        self.prevShootngSensorTripped = State.kNotTripped
         self.ballCount = None
 
     def addBall(self):
@@ -40,21 +40,21 @@ class ballCounter:
         self.ballCount = balls
 
     def execute(self):
-        self.currentLoadingSensorState = self.sensors.loadingSensor(State.kTripped)
-        self.currentShootngSensorState = self.sensors.shootingSensor(State.kTripped)
+        self.currentLoadingSensorTripped = self.sensors.loadingSensor(State.kTripped)
+        self.currentShootngSensorTripped = self.sensors.shootingSensor(State.kTripped)
 
         # If the state of a loading sensor has changed AND it is unbroken,
         # we assume a ball has entered/left and passed a break sensor
         # and so a ball is added/subtracted
-        if(self.currentLoadingSensorState != self.prevLoadingSensorState
-        and self.currentLoadingSensorState == False):
+        if(self.currentLoadingSensorTripped != self.prevLoadingSensorTripped
+        and self.currentLoadingSensorTripped == False):
             self.addBall()
 
-        if(self.currentShootngSensorState != self.prevShootngSensorState
-        and self.currentShootngSensorState == False):
+        if(self.currentShootngSensorTripped != self.prevShootngSensorTripped
+        and self.currentShootngSensorTripped == False):
             self.subtractBall()
 
-        self.prevLoadingSensorState = self.currentLoadingSensorState
-        self.prevShootngSensorState = self.currentShootngSensorState
+        self.prevLoadingSensorTripped = self.currentLoadingSensorTripped
+        self.prevShootngSensorTripped = self.currentShootngSensorTripped
         self.SmartTable.putNumber("BallCount", self.ballCount)
         pass
