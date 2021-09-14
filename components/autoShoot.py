@@ -195,7 +195,6 @@ class AutoShoot(StateMachine):
             self.shooter.setRPM(self.rpm)
         # shoot
         if not self.stopping:
-            self.shooter.autonomousEnabled()
             self.shooter.startShooting()
         self.finished = True
         self.next_state("idling")
