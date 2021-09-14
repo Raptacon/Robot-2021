@@ -8,6 +8,7 @@ class ballCounter:
     SmartTable = NetworkTables.getTable("SmartDashboard")
     compatString = ["doof"]
     sensors: Sensors
+    maxBalls = 4
 
     def on_enable(self):
         self.prevLoadingSensorState = State.kNotTripped
@@ -15,16 +16,16 @@ class ballCounter:
         self.ballCount = None
 
     def addBall(self):
-        if self.ballCount <= 4:
+        if self.ballCount <= self.maxBalls:
             self.ballCount += 1
         else:
             log.error("Too many balls added")
 
     def subtractBall(self):
-        if self.ballCount >= 1:
-            self.ballCount -= 1
-        else:
+        if self.ballCount == 0:
             log.error("Too many balls subtracted")
+        else:
+            self.ballCount -= 1
 
     def resetBallCount(self):
         """
