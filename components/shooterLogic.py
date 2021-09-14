@@ -89,7 +89,6 @@ class ShooterLogic(StateMachine):
     @state
     def alignToTarget(self):
         """Aligns turret and/or drive train to the goal."""
-        self.prevBreakSensorState = self.sensors.shootingSensor(State.kTripped)
         self.next_state('runShooter')
         #NOTE: This is a temporary placeholder until we can get limelight alignment successfully implemented.
         #      Useful logic would include: determining if the limelight can see the target before attempting
@@ -101,7 +100,6 @@ class ShooterLogic(StateMachine):
         Runs shooter to a certain speed, then lets drivers control loading if in teleop.
         If in autonomous, run shooter automatically.
         """
-        self.currentBreakSensorState = self.sensors.shootingSensor(State.kTripped)
         if not self.isAutonomous:
             self.shooterMotors.runShooter(self.teleShootingSpeed)
             if self.isShooterUpToSpeed():
@@ -115,9 +113,6 @@ class ShooterLogic(StateMachine):
             self.shooterMotors.runShooter(self.autoShootingSpeed)
             if self.isShooterUpToSpeed():
                 self.next_state('autonomousShoot')
-
-
-        self.prevBreakSensorState = self.sensors.shootingSensor(State.kTripped)
 
     @timed_state(duration = shooterStoppingDelay, next_state = 'finishShooting')
     def autonomousShoot(self):
