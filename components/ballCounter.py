@@ -1,13 +1,15 @@
 import logging as log
 from components.breakSensors import Sensors, State
+from components.shooterLogic import ShooterLogic
 from networktables import NetworkTables
 
-class ballCounter:
+class BallCounter:
     """Class meant to keep track of the number of balls currently in the hopper"""
 
     SmartTable = NetworkTables.getTable("SmartDashboard")
     compatString = ["doof"]
     sensors: Sensors
+    shooter: ShooterLogic
     maxBalls = 4
 
     def on_enable(self):
@@ -40,6 +42,11 @@ class ballCounter:
         self.ballCount = balls
 
     def execute(self):
+
+        # If the variable hasn't been initialized, assume there are no balls.
+        if self.ballCount == None:
+            self.ballCount = 0
+
         self.currentLoadingSensorTripped = self.sensors.loadingSensor(State.kTripped)
         self.currentShootngSensorTripped = self.sensors.shootingSensor(State.kTripped)
 
@@ -50,8 +57,10 @@ class ballCounter:
         and self.currentLoadingSensorTripped == False):
             self.addBall()
 
+        # We add an extra shooting condition so that backing the balls out of the shooter
+        # doesn't trip this subtraction.
         if(self.currentShootngSensorTripped != self.prevShootngSensorTripped
-        and self.currentShootngSensorTripped == False):
+        and self.currentShootngSensorTripped == False and self.shooter.shooting):
             self.subtractBall()
 
         self.prevLoadingSensorTripped = self.currentLoadingSensorTripped
