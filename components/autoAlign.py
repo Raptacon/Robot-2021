@@ -25,7 +25,7 @@ class AutoAlign(StateMachine):
 
     # PID
     P = tunable(0.01)
-    I = tunable(0.01)
+    I = tunable(0.015)
     D = tunable(0)
     inverted = False
     speed = 0
