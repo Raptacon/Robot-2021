@@ -20,5 +20,7 @@ class Autonomous(AutonomousStateMachine):
     @state(first = True)
     def engage_shooter(self):
         """Starts shooter and fires"""
+        self.driveTrain.execute()
+        self.goToDist.engage()
         self.goToDist.setTargetDist(60)
         self.goToDist.start()
