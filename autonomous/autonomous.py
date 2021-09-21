@@ -4,7 +4,6 @@ from components.shooterLogic import ShooterLogic
 from components.shooterMotors import ShooterMotorCreation
 from components.autoAlign import AutoAlign
 from components.autoShoot import AutoShoot
-from components.shooterLogic import ShooterLogic
 from components.pneumatics import Pneumatics
 
 class Autonomous(AutonomousStateMachine):
