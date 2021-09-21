@@ -1,5 +1,4 @@
 from robotMap import XboxMap
-import logging as log
 from components.shooterMotors import ShooterMotorCreation, Direction
 from components.breakSensors import Sensors, State
 from magicbot import StateMachine, state, timed_state, tunable, feedback
@@ -104,7 +103,6 @@ class ShooterLogic(StateMachine):
         if not self.isAutonomous:
             self.shooterMotors.runShooter(self.teleShootingSpeed)
             if self.isShooterUpToSpeed():
-                log.error("Shoottinginoiansdonosg")
                 self.shooterMotors.runLoader(self.shootingLoaderSpeed, Direction.kForwards)
             else:
                 self.shooterMotors.runLoader(0, Direction.kForwards)
