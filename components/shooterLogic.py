@@ -117,7 +117,6 @@ class ShooterLogic(StateMachine):
     def autonomousShoot(self):
         """Shoot balls when shooter is up to speed. Strictly for autonomous use."""
         if self.isShooterUpToSpeed():
-            log.error("Shoottinginoiansdonosg")
             self.shooterMotors.runLoader(self.shootingLoaderSpeed, Direction.kForwards)
         else:
             self.shooterMotors.runLoader(0, Direction.kForwards)
