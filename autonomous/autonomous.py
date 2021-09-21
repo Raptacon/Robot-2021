@@ -22,6 +22,7 @@ class Autonomous(AutonomousStateMachine):
     def engage_shooter(self):
         """Starts shooter and fires"""
         self.pneumatics.deployLoader()
+        # This is broken
         self.shooter.shootBalls()
         self.next_state('shooter_wait')
 
@@ -51,7 +52,7 @@ class AutonomousAutoShoot(AutonomousStateMachine):
     """Creates the autonomous code"""
     time = 1.4
     MODE_NAME = "AutoShoot Autonomous"
-    DEFAULT = True
+    DEFAULT = False
     driveTrain: DriveTrain
     shooter: ShooterLogic
     shooterMotors: ShooterMotorCreation
