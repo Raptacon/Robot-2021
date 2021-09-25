@@ -5,6 +5,7 @@ Team 3200 Robot base class
 import wpilib
 from wpilib import XboxController
 from wpilib import SerialPort
+from wpilib import SmartDashboard
 from magicbot import MagicRobot, tunable
 
 # Component imports:
@@ -73,6 +74,13 @@ class MyRobot(MagicRobot):
         """
         Robot-wide initialization code should go here. Replaces robotInit
         """
+
+        self.AutoLoadingDrop = wpilib.SendableChooser()
+        self.AutoLoadingDrop.setDefaultOption("Automatic Loading", "True")
+        self.AutoLoadingDrop.addOption("Manual Loading", "False")
+        SmartDashboard.putData("Loading selector", self.AutoLoadingDrop)
+
+
         self.map = RobotMap()
         self.xboxMap = XboxMap(XboxController(1), XboxController(0))
 
@@ -120,8 +128,8 @@ class MyRobot(MagicRobot):
     def teleopInit(self):
         # Register button events for doof
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kX, ButtonEvent.kOnPress, self.pneumatics.toggleLoader)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kY, ButtonEvent.kOnPress, self.loader.setAutoLoading)
-        self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kB, ButtonEvent.kOnPress, self.loader.setManualLoading)
+        # self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kY, ButtonEvent.kOnPress, self.loader.setAutoLoading)
+        # self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kB, ButtonEvent.kOnPress, self.loader.setManualLoading)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnPress, self.shooter.startShooting)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnPress, self.loader.stopLoading)
         self.buttonManager.registerButtonEvent(self.xboxMap.mech, XboxController.Button.kA, ButtonEvent.kOnRelease, self.shooter.doneShooting)
