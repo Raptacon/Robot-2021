@@ -26,6 +26,7 @@ from components.navx import Navx
 from components.turnToAngle import TurnToAngle
 from components.driveTrainGoToDist import GoToDist
 from components.ballCounter import BallCounter
+from components.driveTrainHandler import DriveTrainHandler
 
 # Other imports:
 from robotMap import RobotMap, XboxMap
@@ -62,6 +63,7 @@ class MyRobot(MagicRobot):
     lidar: Lidar
     goToDist: GoToDist
     ballCounter: BallCounter
+    driveTrainHandler: DriveTrainHandler
 
     # Test code:
     testBoard: TestBoard
@@ -151,6 +153,10 @@ class MyRobot(MagicRobot):
         Must include. Called repeatedly while running teleop.
         """
         self.xboxMap.controllerInput()
+
+        #TEST
+        self.driveTrainHandler.requestDriveTrain(self)
+        #/TEST
 
         #This variable determines whether to use controller input for the drivetrain or not.
         #If we are using a command (such as auto align) that uses the drivetrain, we don't want to use the controller's input because it would overwrite
