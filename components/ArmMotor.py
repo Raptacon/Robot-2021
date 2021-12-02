@@ -1,39 +1,28 @@
 from magicbot import StateMachine, state, timed_state, tunable, feedback
-
 class ArmMotor(StateMachine):
     motors_shooter: dict
-
     
-    def endel(self):
-        self.starting = False
+    
+    def enable(self):
         self.finiangle = 0
-        self.running = False
-        self.intangle = 0
+        self.Zeroangle = self.armMotor.getAngle()
+        self.armMotor = self.motors_shooter["armMotor"]
 
-    def start(self):
+    def start(self,angle):
         """
         Sets the starting variable to true,
         this should trigger the stateMachine on
         the next idling run
         """
-        self.starting = True
-    
-    @state(first=True)
-    def idling(self):
-        """
-        Starts the state machine if starting and not running
-        """
-        if self.starting and self.running == False and self.rotationset != 0:
-            self.next_state('rotation')
-        else:
-            self.next_state('idling')
+        self.finiangle = angle
+        self.next_state('rotation')
 
     @state
     def rotation(self):
-        if(self.intangle < self.finiangle):
-            
-        else:
-            self.next_state('stop')
+        if self.armMotor:
+            self.armMotor.set(self.shooterSpeed)
+        elif self.armMotor == False:
+            self.armMotor.set(0)
 
     @state
     def stop(self):
