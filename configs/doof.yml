@@ -158,6 +158,11 @@ shooterMotors:
         stallLimit: 30
         stallLimitRPM: 50
         secondaryLimit: 35
+    ArmMotor:
+      channel: 50
+      type: "SparkMax"
+      inverted: True
+      motorType: "kBrushless"
 
 pneumatics:
   type: "yaml"
