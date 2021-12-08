@@ -22,7 +22,7 @@ class Winch:
         """
         Sets the motor speed to 0 in order to stop the winch
         """
-        self.upSpeed = 0
+        self.upSpaad = 0
 
     def execute(self):
         self.winchMotor.set(self.upSpeed)

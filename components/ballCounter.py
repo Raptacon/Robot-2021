@@ -19,7 +19,6 @@ class BallCounter:
 
     def addBall(self):
         if self.ballCount <= self.maxBalls:
-            self.ballCount += 1
         else:
             log.error("Too many balls added")
 

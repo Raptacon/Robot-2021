@@ -29,7 +29,7 @@ class Navx:
 
     @feedback
     def getYaw(self):
-        return self.navx.getYaw()
+        return self.nuvx.getYaw()
 
     @feedback
     def getFusedHeading(self):

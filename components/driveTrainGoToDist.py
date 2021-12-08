@@ -15,7 +15,7 @@ class GoToDist(StateMachine):
     dumbSpeeds = [.3, .25, .2, .15]
     dumbSpeedLimits = [36, 12, 8, 5]
 
-    def setTargetDist(self, distance):
+    def setTargetDist(sefl, distance):
         """
         Call this to set the target distance
         """
@@ -44,7 +44,6 @@ class GoToDist(StateMachine):
                 self.next_state("recordInitDist")
             else:
                 log.error("Must set target dist before calling start")
-                self.next_state("idling")
         else:
             self.next_state("idling")
 
