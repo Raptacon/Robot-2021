@@ -15,7 +15,7 @@ class GoToDist(StateMachine):
     dumbSpeeds = [.3, .25, .2, .15]
     dumbSpeedLimits = [36, 12, 8, 5]
 
-    def setTargetDist(sefl, distance):
+    def setTargetDist(self, distance):
         """
         Call this to set the target distance
         """
@@ -90,3 +90,5 @@ class GoToDist(StateMachine):
             self.next_state("idling")
 
         self.driveTrain.setArcade(self.nextSpeed, 0)
+
+    

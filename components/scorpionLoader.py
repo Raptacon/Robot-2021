@@ -15,7 +15,7 @@ class ScorpionLoader:
         self.shooterSpeed = 0
     
         self.loaderMotor = self.motors_loader["loaderMotor"]
-        self.intakeMotor = self.metors_loader["intakeMotor"]
+        self.intakeMotor = self.motors_loader["intakeMotor"]
         self.logger.info("Shooter Motor Component Created")
 
     def runLoader(self, lSpeed):
