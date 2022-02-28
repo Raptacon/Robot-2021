@@ -3,6 +3,7 @@ from components.shooterMotors import ShooterMotorCreation, Direction
 from components.breakSensors import Sensors, State
 from components.feederMap import FeederMap, Type
 from magicbot import StateMachine, state, timed_state, tunable, feedback
+from wpilib import SendableChooser
 
 class LoaderLogic(StateMachine):
     """StateMachine-based loader. Has both automatic and manual modes."""
@@ -14,7 +15,8 @@ class LoaderLogic(StateMachine):
     sensors: Sensors
     xboxMap: XboxMap
 
-    # Tunable
+    # Network Table variables
+    AutoLoadingDrop: SendableChooser
     automaticLoaderSpeed = tunable(.4)
 
     # Other variables
@@ -94,6 +96,10 @@ class LoaderLogic(StateMachine):
 
     def execute(self):
         """Constantly runs state machine and intake. Necessary for function."""
+        if self.AutoLoadingDrop.getSelected() == "True":
+            self.setAutoLoading()
+        else:
+            self.setManualLoading()
         self.engage()
         self.runIntake()
         super().execute()
